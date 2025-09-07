@@ -3,10 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hola Mundo</title>
+    <title>Horóscopo del Día</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #6a1b9a;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .date {
+            color: #777;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .signs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+        .sign {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .sign h2 {
+            margin-top: 0;
+            color: #4a148c;
+            font-size: 1.5em;
+        }
+        p {
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
-    <h1>¡Hola Mundo, horoscopo!</h1>
-</body>
 
+    <div class="container">
+        <h1>El Horóscopo de Hoy</h1>
+        <div class="date">Domingo, 7 de septiembre de 2025</div>
+        
+        <div class="signs-grid">
+            </div>
+    </div>
+
+</body>
 </html>

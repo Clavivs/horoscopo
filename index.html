@@ -18,7 +18,7 @@
         }
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background-color: #ffffff;
             padding: 30px;
             border-radius: 12px;
@@ -37,7 +37,7 @@
         }
         .signs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             text-align: left;
         }
@@ -46,14 +46,32 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
         }
-        .sign h2 {
-            margin-top: 0;
+        .sign-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .sign-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+            color: #4a148c;
+            line-height: 1; /* Para alinear verticalmente el texto */
+        }
+        .sign-info h2 {
+            margin: 0;
             color: #4a148c;
             font-size: 1.5em;
         }
-        p {
-            line-height: 1.6;
+        .sign-info p {
+            margin: 0;
+            color: #777;
+            font-size: 0.9em;
+        }
+        .sign-horoscope {
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -64,7 +82,164 @@
         <div class="date">Domingo, 7 de septiembre de 2025</div>
         
         <div class="signs-grid">
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♈</span>
+                    <div class="sign-info">
+                        <h2>Aries</h2>
+                        <p>21 de marzo - 19 de abril</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Aries.</p>
+                </div>
             </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♉</span>
+                    <div class="sign-info">
+                        <h2>Tauro</h2>
+                        <p>20 de abril - 20 de mayo</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Tauro.</p>
+                </div>
+            </div>
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♊</span>
+                    <div class="sign-info">
+                        <h2>Géminis</h2>
+                        <p>21 de mayo - 20 de junio</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Géminis.</p>
+                </div>
+            </div>
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♋</span>
+                    <div class="sign-info">
+                        <h2>Cáncer</h2>
+                        <p>21 de junio - 22 de julio</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Cáncer.</p>
+                </div>
+            </div>
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♌</span>
+                    <div class="sign-info">
+                        <h2>Leo</h2>
+                        <p>23 de julio - 22 de agosto</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Leo.</p>
+                </div>
+            </div>
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♍</span>
+                    <div class="sign-info">
+                        <h2>Virgo</h2>
+                        <p>23 de agosto - 22 de septiembre</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Virgo.</p>
+                </div>
+            </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♎</span>
+                    <div class="sign-info">
+                        <h2>Libra</h2>
+                        <p>23 de septiembre - 22 de octubre</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Libra.</p>
+                </div>
+            </div>
+            
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♏</span>
+                    <div class="sign-info">
+                        <h2>Escorpio</h2>
+                        <p>23 de octubre - 21 de noviembre</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Escorpio.</p>
+                </div>
+            </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♐</span>
+                    <div class="sign-info">
+                        <h2>Sagitario</h2>
+                        <p>22 de noviembre - 21 de diciembre</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Sagitario.</p>
+                </div>
+            </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♑</span>
+                    <div class="sign-info">
+                        <h2>Capricornio</h2>
+                        <p>22 de diciembre - 19 de enero</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Capricornio.</p>
+                </div>
+            </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♒</span>
+                    <div class="sign-info">
+                        <h2>Acuario</h2>
+                        <p>20 de enero - 18 de febrero</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Acuario.</p>
+                </div>
+            </div>
+
+            <div class="sign">
+                <div class="sign-header">
+                    <span class="sign-icon">♓</span>
+                    <div class="sign-info">
+                        <h2>Piscis</h2>
+                        <p>19 de febrero - 20 de marzo</p>
+                    </div>
+                </div>
+                <div class="sign-horoscope">
+                    <p>Aquí va el horóscopo de Piscis.</p>
+                </div>
+            </div>
+            
+        </div>
     </div>
 
 </body>

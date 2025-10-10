@@ -1,0 +1,42 @@
+name: Daily Horoscopo Update
+
+on:
+  schedule:
+    # Esto programa la acción para que se ejecute una vez al día (a medianoche UTC)
+    - cron: '0 0 * * *' 
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        # Si tienes librerías en requirements.txt, descomenta esta línea:
+        # run: pip install -r requirements.txt
+      - name: Run script
+        run: python main.py
+
+      # --- Pasos para hacer Commit y Push ---
+      - name: Commit files
+        id: commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # Añade el archivo horoscopo.json
+          git add horoscopo.json
+          # Comprueba si hay cambios antes de hacer commit
+          git commit -m "Automated Horoscopo Update" || echo "No changes to commit"
+
+      - name: Push changes
+        # Solo hace push si el commit fue exitoso
+        if: steps.commit.outcome == 'success'
+        uses: ad-m/github-push-action@master
+        with:
+          # Usa el token por defecto para la autenticación
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

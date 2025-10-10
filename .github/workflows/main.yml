@@ -31,7 +31,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add horoscopo/horoscopo.json # ¡Asegúrate de cambiar también esta ruta!
+          git add horoscopo/horoscopo.json 
           git commit -m "Automated Horoscopo Update" || echo "No changes to commit"
 
       # 5. Push Changes: Sube los cambios a la rama 'main' de GitHub

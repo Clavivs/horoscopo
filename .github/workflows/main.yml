@@ -24,7 +24,9 @@ jobs:
       
       # 3. Run Script: Ejecuta tu código principal para actualizar horoscopo.json
       - name: Run script
-        run: python main.py
+        run: |
+          cd $GITHUB_WORKSPACE/horoscopo/
+          python main.py
 
       # 4. Commit Files: Configura Git y hace commit de los cambios
       - name: Commit files

@@ -24,9 +24,7 @@ jobs:
       
       # 3. Run Script: Ejecuta tu código principal para actualizar horoscopo.json
       - name: Run script
-         run:|
-         cd horoscopo
-         python horoscopo/main.py
+         run:python horoscopo.github/workflows/main.yml
 
       - name: Commit files
         id: commit

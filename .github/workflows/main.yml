@@ -24,18 +24,14 @@ jobs:
       
       # 3. Run Script: Ejecuta tu código principal para actualizar horoscopo.json
       - name: Run script
-        run: |
-          cd $GITHUB_WORKSPACE/horoscopo/
-          python main.py
+        run: python horoscopo/main.py
 
-      # 4. Commit Files: Configura Git y hace commit de los cambios
       - name: Commit files
         id: commit
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add horoscopo.json
-          # Si no hay cambios, no fallará
+          git add horoscopo/horoscopo.json # ¡Asegúrate de cambiar también esta ruta!
           git commit -m "Automated Horoscopo Update" || echo "No changes to commit"
 
       # 5. Push Changes: Sube los cambios a la rama 'main' de GitHub

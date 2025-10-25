@@ -47,4 +47,4 @@ jobs:
             git add index.html
             git commit -m "🤖 Actualización automática del Horóscopo por Gemini API"
             git push
-          fi
+          end

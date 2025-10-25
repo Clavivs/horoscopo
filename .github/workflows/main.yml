@@ -1,43 +1,50 @@
-name: Daily Horoscopo Update
+name: Actualización Diaria del Horóscopo
 
 on:
+  # Programación diaria: se ejecuta todos los días a las 00:00 (medianoche) UTC
   schedule:
-    # Programado para ejecutarse a las 00:00 UTC (medianoche) todos los días
     - cron: '0 0 * * *' 
-  # Permite ejecutarlo manualmente desde la pestaña 'Actions'
+  # Permite ejecutarlo manualmente desde la pestaña "Actions"
   workflow_dispatch:
 
 jobs:
-  update:
+  update-content:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout: Clona el código del repositorio
-      - uses: actions/checkout@v4
-      
-      # 2. Setup Python: Configura el entorno de Python 3
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v4
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        # Necesitas un token con permisos para escribir. 
+        # El GITHUB_TOKEN por defecto es suficiente para un push.
         with:
-          python-version: '3.x'
-      - name: Install dependencies 
-        run: pip install -r requirements.txt
-      
-      # 3. Run Script: Ejecuta tu código principal para actualizar horoscopo.json
-      - name: Run script
-        run: python main.py
+          token: ${{ secrets.GITHUB_TOKEN }} 
 
-      - name: Commit files
-        id: commit
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias del script
+        # Ejecuta la instalación de @google/genai
+        run: npm install 
+
+      - name: Ejecutar Script y Generar index.html
+        run: node update.js
+        env:
+          # Pasa la clave de API como una variable de entorno
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Configurar Git para el commit automático
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add horoscopo/horoscopo.json 
-          git commit -m "Automated Horoscopo Update" || echo "No changes to commit"
-
-      # 5. Push Changes: Sube los cambios a la rama 'main' de GitHub
-      - name: Push changes
-        if: steps.commit.outcome == 'success'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Commit y Push de los cambios si existen
+        # Verifica si index.html ha cambiado antes de hacer commit
+        run: |
+          if git diff --exit-code index.html; then
+            echo "No se encontraron cambios en index.html. Saltando commit."
+          else
+            git add index.html
+            git commit -m "🤖 Actualización automática del Horóscopo por Gemini API"
+            git push
+          fi

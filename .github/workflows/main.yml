@@ -22,11 +22,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cambiar al directorio del proyecto
-        run: cd horoscopo
-      - name: Instalar dependencias del script
-        # Ejecuta la instalación de @google/genai
-        run: npm install 
+      - name: Instalar dependencias
+        run: |
+          cd horoscopo
+          npm install
 
       - name: Ejecutar Script y Generar index.html
         run: node update.js

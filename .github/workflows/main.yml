@@ -22,7 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+      - name: Cambiar al directorio del proyecto
+        run: cd horoscopo
       - name: Instalar dependencias del script
         # Ejecuta la instalación de @google/genai
         run: npm install 
@@ -45,6 +46,6 @@ jobs:
             echo "No se encontraron cambios en index.html. Saltando commit."
           else
             git add index.html
-            git commit -m "🤖 Actualización automática del Horóscopo por Gemini API"
+            git commit -m "Actualización automática del Horóscopo por Gemini API"
             git push
           end

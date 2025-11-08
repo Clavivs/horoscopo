@@ -22,11 +22,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Instalar dependencias
-        run: |
-          cd ${{ github.workspace }}
-          npm install
-          working-directory: main
+   #   - name: Instalar dependencias
+   #      run: |
+   #       cd ${{ github.workspace }}
+   #       npm install
+   #        working-directory: main
           
       - name: Ejecutar Script y Generar index.html
         run: node update.js

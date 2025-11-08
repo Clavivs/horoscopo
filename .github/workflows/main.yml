@@ -24,7 +24,6 @@ jobs:
           node-version: '20'
       - name: Instalar dependencias
         run: |
-          cd horoscopo
           npm install
 
       - name: Ejecutar Script y Generar index.html

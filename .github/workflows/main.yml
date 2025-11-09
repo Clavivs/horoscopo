@@ -23,10 +23,10 @@ jobs:
         with:
           node-version: '20'
       - name: Instalar dependencias
-         run: |
+         run:|
           cd ${{ github.workspace }}
           npm install
-           working-directory: horoscopo
+           working-directory:horoscopo
           
       - name: Ejecutar Script y Generar index.html
         run: node update.js

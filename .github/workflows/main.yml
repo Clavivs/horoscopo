@@ -22,15 +22,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-   #   - name: Instalar dependencias
-   #      run: |
-   #       cd ${{ github.workspace }}
-   #       npm install
-   #        working-directory: main
+      - name: Instalar dependencias
+         run: |
+          cd ${{ github.workspace }}
+          npm install
+           working-directory: horoscopo
           
       - name: Ejecutar Script y Generar index.html
         run: node update.js
-        working-directory: main
+        working-directory: horoscopo
         env:
           # Pasa la clave de API como una variable de entorno
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          working-directory: main
+          working-directory: horoscopo
           
       - name: Commit y Push de los cambios si existen
         # Verifica si index.html ha cambiado antes de hacer commit
@@ -51,4 +51,4 @@ jobs:
             git commit -m "Actualización automática del Horóscopo por Gemini API"
             git push
           end
-          working-directory: main
+          working-directory: horoscopo

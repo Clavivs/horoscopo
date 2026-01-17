@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Clonar el repositorio
+      # 1️⃣ Clonar el repo
       - name: Checkout del código
         uses: actions/checkout@v4
 
@@ -20,13 +20,13 @@ jobs:
         with:
           node-version: '20'
 
-      # 3️⃣ Ejecutar update.js directamente, sin npm
+      # 3️⃣ Ejecutar update.js directamente, desde la carpeta horoscopo
       - name: Generar horóscopo
         run: node horoscopo/update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      # 4️⃣ Configurar Git dentro de la carpeta horoscopo
+      # 4️⃣ Configurar Git dentro de horoscopo
       - name: Configurar Git
         run: |
           cd horoscopo

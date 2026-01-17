@@ -22,7 +22,7 @@ jobs:
 
       # 3️⃣ Ejecutar update.js directamente, sin npm
       - name: Generar horóscopo
-        run: node update.js
+        run: node horoscopo/update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 

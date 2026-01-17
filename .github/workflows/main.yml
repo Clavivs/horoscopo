@@ -20,9 +20,11 @@ jobs:
 
       - name: Instalar dependencias
         run: npm install
+        working-directory: horoscopo
 
       - name: Ejecutar Script y Generar index.html
         run: node update.js
+        working-directory: horoscopo
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
@@ -30,6 +32,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+        working-directory: horoscopo
 
       - name: Commit y Push de los cambios si existen
         run: |
@@ -40,3 +43,4 @@ jobs:
             git commit -m "Actualización automática del Horóscopo por Gemini API"
             git push
           fi
+        working-directory: horoscopo

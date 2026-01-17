@@ -2,41 +2,45 @@ name: Actualización Diaria del Horóscopo
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # se ejecuta todos los días a medianoche UTC
+  workflow_dispatch:      # permite ejecutarlo manualmente
 
 jobs:
-  update-content:
+  update-horoscope:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Clonar el repositorio
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js 20
+      # 2️⃣ Configurar Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Ejecutar Script y Generar index.html
-        run: node update.js
+      # 3️⃣ Ejecutar update.js directamente, sin npm
+      - name: Generar horóscopo
+        run: node horoscopo/update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: Configurar Git para el commit automático
+      # 4️⃣ Configurar Git dentro de la carpeta horoscopo
+      - name: Configurar Git
         run: |
+          cd horoscopo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit y Push de los cambios si existen
+      # 5️⃣ Commit y push si index.html cambió
+      - name: Commit y push cambios
         run: |
+          cd horoscopo
           if git diff --exit-code index.html; then
-            echo "No se encontraron cambios en index.html. Saltando commit."
+            echo "No hay cambios en index.html. Saltando commit."
           else
             git add index.html
-            git commit -m "Actualización automática del Horóscopo por Gemini API"
+            git commit -m "Actualización automática del horóscopo"
             git push
           fi

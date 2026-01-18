@@ -21,11 +21,10 @@ jobs:
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node horoscopo/update.js
+        run: node update.js
 
       - name: Commit cambios
         run: |
-          cd horoscopo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 

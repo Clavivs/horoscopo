@@ -1,46 +1,37 @@
-name: Actualización Diaria del Horóscopo
+name: Actualizar Horóscopo Diario
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # se ejecuta todos los días a medianoche UTC
-  workflow_dispatch:      # permite ejecutarlo manualmente
+    - cron: "0 5 * * *" # Todos los días a las 05:00 UTC
+  workflow_dispatch:
 
 jobs:
-  update-horoscope:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Clonar el repo
-      - name: Checkout del código
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Configurar Node.js
-      - name: Configurar Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
-      # 3️⃣ Ejecutar update.js directamente, desde la carpeta horoscopo
-      - name: Generar horóscopo
-        run: node horoscopo/update.js
+      - name: Install dependencies
+        run: npm install
+
+      - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node update.js
 
-      # 4️⃣ Configurar Git dentro de horoscopo
-      - name: Configurar Git
+      - name: Commit cambios
         run: |
-          cd horoscopo
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add index.html
+          git commit -m "Horóscopo actualizado automáticamente" || echo "Sin cambios"
 
-      # 5️⃣ Commit y push si index.html cambió
-      - name: Commit y push cambios
-        run: |
-          cd horoscopo
-          if git diff --exit-code index.html; then
-            echo "No hay cambios en index.html. Saltando commit."
-          else
-            git add index.html
-            git commit -m "Actualización automática del horóscopo"
-            git push
-          fi
+      - name: Push cambios
+        run: git push

@@ -2,7 +2,7 @@ name: Actualizar Horóscopo Diario
 
 on:
   schedule:
-    - cron: "0 5 * * *" # Todos los días a las 05:00 UTC
+    - cron: "0 5 * * *"
   workflow_dispatch:
 
 jobs:
@@ -18,20 +18,21 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node update.js
+        run: node horoscopo/update.js
 
       - name: Commit cambios
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add index.html
-          git commit -m "Horóscopo actualizado automáticamente" || echo "Sin cambios"
+          cd horoscopo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Push cambios
-        run: git push
+          if git diff --exit-code index.html; then
+            echo "Sin cambios en index.html"
+          else
+            git add index.html
+            git commit -m "Horóscopo actualizado automáticamente"
+            git push
+          fi

@@ -19,20 +19,25 @@ jobs:
           node-version: 20
 
       - name: Instalar dependencias
-        run: npm install
+        run: |
+          cd horoscopo
+          npm install
 
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node update.js
-
-      - name: Commit cambios
         run: |
+          cd horoscopo
+          node update.js
+
+      - name: Commit y push cambios
+        run: |
+          cd horoscopo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if git diff --exit-code index.html; then
-            echo "Sin cambios en index.html"
+            echo "Sin cambios"
           else
             git add index.html
             git commit -m "Horóscopo actualizado automáticamente"

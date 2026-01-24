@@ -11,7 +11,7 @@ if (!apiKey) {
   throw new Error("GEMINI_API_KEY no está configurada en los Secrets de GitHub.");
 }
 
-const ai = new GoogleGenAI(apiKey);
+const ai = new GoogleGenAI({ apiKey });
 
 // Petición al modelo
 const prompt = `Genera el horóscopo diario para el signo ${signName} para hoy. 

@@ -26,14 +26,20 @@ async function generateHoroscope() {
       contents: [{ role: "user", parts: [{ text: prompt }] }]
     });
 
-    return result.text.trim();
+    const text = result.response.text();
+
+    if (!text) {
+      throw new Error("Respuesta vacía de Gemini");
+    }
+
+    return text.trim();
 
   } catch (error) {
-    console.error("Error al llamar a la API de Gemini:", error);
-    // Fallback: devolver un mensaje de error para evitar romper el archivo HTML
-    return "Lo siento, hubo un error al obtener el horóscopo de hoy. Inténtalo de nuevo más tarde.";
+    console.error("❌ Error al llamar a la API de Gemini:", error);
+    process.exit(1); // IMPORTANTE, ver abajo
   }
 }
+
 
 async function updateIndexHtml() {
   const newHoroscope = await generateHoroscope();

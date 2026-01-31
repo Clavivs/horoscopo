@@ -27,13 +27,20 @@ const SIGNS = [
   { name: "Piscis", symbol: "♓" }
 ];
 
-// Función que genera el horóscopo para un signo
-async function generateHoroscope(signName) {
-  console.log(`Generando horóscopo para ${signName}...`);
+// Generar horóscopos de los 12 signos en una sola llamada
+async function generateAllHoroscopes() {
+  console.log("Generando horóscopos para los 12 signos...");
 
-  const prompt = `Genera el horóscopo diario para el signo ${signName} para hoy.
-La respuesta debe ser solo el texto del horóscopo, sin encabezados, títulos ni fechas.
-Máximo 120 palabras.`;
+  // Construimos un prompt que pida los 12 horóscopos separados
+  const prompt = `Genera el horóscopo diario para los 12 signos del zodiaco. 
+  Devuelve el resultado en formato JSON, donde cada clave sea el nombre del signo y el valor su horóscopo.
+  Ejemplo de formato:
+  {
+    "Aries": "texto del horóscopo",
+    "Tauro": "texto del horóscopo",
+    ...
+  }
+  Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
 
   try {
     const result = await ai.models.generateContent({
@@ -42,28 +49,36 @@ Máximo 120 palabras.`;
     });
 
     if (!result.text) {
-      throw new Error(`Respuesta vacía para ${signName}`);
+      throw new Error("Respuesta vacía de Gemini");
     }
 
-    return result.text.trim();
+    // Convertimos el texto JSON en objeto
+    const horoscopes = JSON.parse(result.text);
+    return horoscopes;
 
   } catch (error) {
-    console.error(`❌ Error al generar horóscopo de ${signName}:`, error);
-    return "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+    console.error("❌ Error al generar horóscopos:", error);
+    // fallback: texto de error para todos los signos
+    const fallback = {};
+    for (const sign of SIGNS) {
+      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+    }
+    return fallback;
   }
 }
 
-// Función que actualiza index.html con los 12 signos
+// Función que crea index.html con los 12 horóscopos
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
+  const horoscopes = await generateAllHoroscopes();
+
   let horoscopeHtml = "";
 
-  // Generar horóscopo para cada signo
   for (const sign of SIGNS) {
-    const text = await generateHoroscope(sign.name);
+    const text = horoscopes[sign.name] || "Lo siento, hubo un error al obtener el horóscopo de hoy.";
     horoscopeHtml += `
       <div class="sign">
         <h2>${sign.name} ${sign.symbol}</h2>
@@ -72,7 +87,6 @@ async function updateIndexHtml() {
     `;
   }
 
-  // Contenido completo del HTML
   const newContent = `<!DOCTYPE html>
 <html lang="es">
 <head>

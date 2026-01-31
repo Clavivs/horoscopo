@@ -31,26 +31,23 @@ const prompt = `Genera el horóscopo diario para el signo ${signName} para hoy.
 La respuesta debe ser solo el texto del horóscopo, sin encabezados, fechas o títulos. 
 Máximo 120 palabras.`;
 
-async function generateHoroscope() {
+async function generateHoroscope(signName) {
   console.log(`Generando horóscopo para ${signName}...`);
-  try {
-    const result = await ai.models.generateContent({
-      model,
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
-    });
 
-    const text = result.text;
+  const prompt = `Genera el horóscopo diario para el signo ${signName} para hoy.
+La respuesta debe ser solo el texto del horóscopo, sin encabezados ni fechas.
+Máximo 120 palabras.`;
 
-    if (!text) {
-      throw new Error("Respuesta vacía de Gemini");
-    }
+  const result = await ai.models.generateContent({
+    model,
+    contents: [{ role: "user", parts: [{ text: prompt }] }]
+  });
 
-    return text.trim();
-
-  } catch (error) {
-    console.error("❌ Error al llamar a la API de Gemini:", error);
-    process.exit(1); // IMPORTANTE, ver abajo
+  if (!result.text) {
+    throw new Error(`Respuesta vacía para ${signName}`);
   }
+
+  return result.text.trim();
 }
 
 

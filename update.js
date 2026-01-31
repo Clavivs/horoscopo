@@ -44,28 +44,34 @@ Ejemplo de formato:
 }
 Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
 
-  try {
-    const result = await ai.models.generateContent({
-      model,
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
-    });
+ try {
+  const result = await ai.models.generateContent({
+    model,
+    contents: [{ role: "user", parts: [{ text: prompt }] }]
+  });
 
-    if (!result.text) {
-      throw new Error("Respuesta vacía de Gemini");
-    }
-
-    // Convertimos JSON
-    return JSON.parse(result.text);
-
-  } catch (error) {
-    console.error("❌ Error al generar horóscopos:", error);
-    const fallback = {};
-    for (const sign of SIGNS) {
-      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
-    }
-    return fallback;
+  if (!result.text) {
+    throw new Error("Respuesta vacía de Gemini");
   }
+
+  let rawText = result.text.trim();
+
+  rawText = rawText
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
+
+  return JSON.parse(rawText);
+
+} catch (error) {
+  console.error("❌ Error al generar horóscopos:", error);
+  const fallback = {};
+  for (const sign of SIGNS) {
+    fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+  }
+  return fallback;
 }
+
 
 // --- Crear index.html con los 12 signos ---
 async function updateIndexHtml() {

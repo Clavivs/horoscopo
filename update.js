@@ -50,11 +50,14 @@ Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.
     contents: [{ role: "user", parts: [{ text: prompt }] }]
   });
 
-  if (!result.text) {
-    throw new Error("Respuesta vacía de Gemini");
-  }
+ const rawResponse = result.response.text();
 
-  let rawText = result.text.trim();
+if (!rawResponse) {
+  throw new Error("Respuesta vacía de Gemini");
+}
+
+let rawText = rawResponse.trim();
+
 
   rawText = rawText
     .replace(/```json/gi, '')

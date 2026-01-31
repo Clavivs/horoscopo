@@ -26,7 +26,7 @@ async function generateHoroscope() {
       contents: [{ role: "user", parts: [{ text: prompt }] }]
     });
 
-    const text = result.response.text();
+    const text = result.text;
 
     if (!text) {
       throw new Error("Respuesta vacía de Gemini");

@@ -56,22 +56,16 @@ if (!rawResponse) {
   throw new Error("Respuesta vacía de Gemini");
 }
 
-let rawText = rawResponse.trim();
+const start = rawResponse.indexOf('{');
+const end = rawResponse.lastIndexOf('}');
 
-// Quitamos fences y texto alrededor
-rawText = rawText
-  .replace(/```json/gi, '')
-  .replace(/```/g, '')
-  .trim();
-
-// Extraer SOLO el JSON aunque Gemini escriba cosas antes o después
-const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-
-if (!jsonMatch) {
-  throw new Error("No se encontró JSON en la respuesta de Gemini");
+if (start === -1 || end === -1) {
+  throw new Error("No se encontró un bloque JSON en la respuesta de Gemini");
 }
 
-return JSON.parse(jsonMatch[0]);
+const jsonString = rawResponse.slice(start, end + 1);
+
+return JSON.parse(jsonString);
 
 
 } catch (error) {

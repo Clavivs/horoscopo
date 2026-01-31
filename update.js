@@ -71,7 +71,7 @@ Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.
   }
   return fallback;
 }
-
+}
 
 // --- Crear index.html con los 12 signos ---
 async function updateIndexHtml() {

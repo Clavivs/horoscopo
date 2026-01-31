@@ -58,13 +58,21 @@ if (!rawResponse) {
 
 let rawText = rawResponse.trim();
 
+// Quitamos fences y texto alrededor
+rawText = rawText
+  .replace(/```json/gi, '')
+  .replace(/```/g, '')
+  .trim();
 
-  rawText = rawText
-    .replace(/```json/gi, '')
-    .replace(/```/g, '')
-    .trim();
+// Extraer SOLO el JSON aunque Gemini escriba cosas antes o después
+const jsonMatch = rawText.match(/\{[\s\S]*\}/);
 
-  return JSON.parse(rawText);
+if (!jsonMatch) {
+  throw new Error("No se encontró JSON en la respuesta de Gemini");
+}
+
+return JSON.parse(jsonMatch[0]);
+
 
 } catch (error) {
   console.error("❌ Error al generar horóscopos:", error);

@@ -5,7 +5,20 @@ import * as fs from 'fs/promises';
 // La clave se inyecta de los Secrets de GitHub
 const apiKey = process.env.GEMINI_API_KEY; 
 const model = "gemini-2.5-flash"; 
-const signName = "Aries"; 
+const SIGNS = [
+  { name: "Aries", symbol: "♈" },
+  { name: "Tauro", symbol: "♉" },
+  { name: "Géminis", symbol: "♊" },
+  { name: "Cáncer", symbol: "♋" },
+  { name: "Leo", symbol: "♌" },
+  { name: "Virgo", symbol: "♍" },
+  { name: "Libra", symbol: "♎" },
+  { name: "Escorpio", symbol: "♏" },
+  { name: "Sagitario", symbol: "♐" },
+  { name: "Capricornio", symbol: "♑" },
+  { name: "Acuario", symbol: "♒" },
+  { name: "Piscis", symbol: "♓" }
+]; 
 
 if (!apiKey) {
   throw new Error("GEMINI_API_KEY no está configurada en los Secrets de GitHub.");

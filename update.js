@@ -1,8 +1,11 @@
 import { GoogleGenAI } from '@google/genai';
 import * as fs from 'fs/promises';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+const execAsync = promisify(exec);
 
 // --- Configuración ---
-const apiKey = process.env.GEMINI_API_KEY; 
+const apiKey = process.env.GEMINI_API_KEY;
 const model = "gemini-2.5-flash";
 
 if (!apiKey) {
@@ -27,20 +30,19 @@ const SIGNS = [
   { name: "Piscis", symbol: "♓" }
 ];
 
-// Generar horóscopos de los 12 signos en una sola llamada
+// --- Generar horóscopos de los 12 signos en una sola llamada ---
 async function generateAllHoroscopes() {
   console.log("Generando horóscopos para los 12 signos...");
 
-  // Construimos un prompt que pida los 12 horóscopos separados
-  const prompt = `Genera el horóscopo diario para los 12 signos del zodiaco. 
-  Devuelve el resultado en formato JSON, donde cada clave sea el nombre del signo y el valor su horóscopo.
-  Ejemplo de formato:
-  {
-    "Aries": "texto del horóscopo",
-    "Tauro": "texto del horóscopo",
-    ...
-  }
-  Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
+  const prompt = `Genera el horóscopo diario para los 12 signos del zodiaco.
+Devuelve el resultado en formato JSON, donde cada clave sea el nombre del signo y el valor su horóscopo.
+Ejemplo de formato:
+{
+  "Aries": "texto del horóscopo",
+  "Tauro": "texto del horóscopo",
+  ...
+}
+Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
 
   try {
     const result = await ai.models.generateContent({
@@ -52,13 +54,11 @@ async function generateAllHoroscopes() {
       throw new Error("Respuesta vacía de Gemini");
     }
 
-    // Convertimos el texto JSON en objeto
-    const horoscopes = JSON.parse(result.text);
-    return horoscopes;
+    // Convertimos JSON
+    return JSON.parse(result.text);
 
   } catch (error) {
     console.error("❌ Error al generar horóscopos:", error);
-    // fallback: texto de error para todos los signos
     const fallback = {};
     for (const sign of SIGNS) {
       fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
@@ -67,7 +67,7 @@ async function generateAllHoroscopes() {
   }
 }
 
-// Función que crea index.html con los 12 horóscopos
+// --- Crear index.html con los 12 signos ---
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -76,7 +76,6 @@ async function updateIndexHtml() {
   const horoscopes = await generateAllHoroscopes();
 
   let horoscopeHtml = "";
-
   for (const sign of SIGNS) {
     const text = horoscopes[sign.name] || "Lo siento, hubo un error al obtener el horóscopo de hoy.";
     horoscopeHtml += `
@@ -117,7 +116,25 @@ async function updateIndexHtml() {
 
   await fs.writeFile('index.html', newContent);
   console.log('index.html actualizado exitosamente.');
+
+  // --- Commit y push automático ---
+  try {
+    await execAsync('git config user.name "github-actions[bot]"');
+    await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+
+    await execAsync('git add index.html');
+    await execAsync('git commit -m "Horóscopo actualizado automáticamente [skip ci]"');
+    await execAsync('git push origin main');
+
+    console.log('Cambios subidos a GitHub correctamente.');
+  } catch (error) {
+    if (error.message.includes('nothing to commit')) {
+      console.log('No hay cambios en index.html, no se hace commit.');
+    } else {
+      console.error('Error al hacer commit/push:', error);
+    }
+  }
 }
 
-// Ejecutar
+// --- Ejecutar ---
 updateIndexHtml();

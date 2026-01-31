@@ -24,7 +24,7 @@ jobs:
 
       - name: Ejecutar update.js
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY}}
         run: node update.js
 
       - name: Commit y push cambios

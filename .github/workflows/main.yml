@@ -21,8 +21,9 @@ jobs:
           node-version: 20
 
       - name: Instalar dependencias
-        run: npm install @google/genai # Forzamos la instalación de la librería de IA
-
+        run: |
+          npm init -y
+          npm install @google/genai@latest
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

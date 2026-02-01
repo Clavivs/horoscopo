@@ -19,11 +19,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Instalar dependencias
         run: |
-          rm -f package-lock.json
-          npm install @google/genai@0.21.0
+          npm init -y
+          npm install @google/genai
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

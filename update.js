@@ -46,27 +46,20 @@ Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.
 
  try {
   const result = await ai.models.generateContent({
-    model,
-    contents: [{ role: "user", parts: [{ text: prompt }] }]
-  });
+  model,
+  contents: [{ role: "user", parts: [{ text: prompt }] }],
+  config: {
+    responseMimeType: "application/json"
+  }
+});
 
-const rawResponse =result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+const rawResponse = result.response.text();
 
 if (!rawResponse) {
   throw new Error("Respuesta vacía de Gemini");
 }
 
-const start = rawResponse.indexOf('{');
-const end = rawResponse.lastIndexOf('}');
-
-if (start === -1 || end === -1) {
-  throw new Error("No se encontró un bloque JSON en la respuesta de Gemini");
-}
-
-const jsonString = rawResponse.slice(start, end + 1);
-
-return JSON.parse(jsonString);
-
+return JSON.parse(rawResponse);
 
 } catch (error) {
   console.error("❌ Error al generar horóscopos:", error);

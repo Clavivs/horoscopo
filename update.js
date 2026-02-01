@@ -23,7 +23,12 @@ async function generateAllHoroscopes() {
     const prompt = `Devuelve un JSON con el horóscopo de hoy para los 12 signos: {"Aries": "...", ...}. Solo JSON, sin markdown.`;
     
     const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```json|```/g, "").trim();
+    const response = await result.response;
+    let text = response.text();
+    
+    // Limpiamos el texto por si viene con bloques de código markdown
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    
     return JSON.parse(text);
   } catch (error) {
     console.error("DETALLE DEL ERROR:", error.message);

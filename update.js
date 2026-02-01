@@ -70,7 +70,7 @@ async function generateAllHoroscopes() {
     const fallback = {};
     // ... resto de tu código
     for (const sign of SIGNS) {
-      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy A.";
     }
     return fallback;
   }
@@ -86,7 +86,7 @@ async function updateIndexHtml() {
 
   let horoscopeHtml = "";
   for (const sign of SIGNS) {
-    const text = horoscopes[sign.name] || "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+    const text = horoscopes[sign.name] || "Lo siento, hubo un error al obtener el horóscopo de hoy B.";
     horoscopeHtml += `
       <div class="sign">
         <h2>${sign.name} ${sign.symbol}</h2>

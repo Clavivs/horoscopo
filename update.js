@@ -1,4 +1,7 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
+// Fuerza a que la consola nos diga qué versión está usando
+import { VERSION } from "@google/genai"; 
+console.log("Versión de la librería:", VERSION);
 import * as fs from 'fs/promises';
 
 const apiKey = process.env.GEMINI_API_KEY;

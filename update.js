@@ -34,42 +34,49 @@ const SIGNS = [
 async function generateAllHoroscopes() {
   console.log("Generando horóscopos para los 12 signos...");
 
-  const prompt = `Genera el horóscopo diario para los 12 signos del zodiaco.
-Devuelve el resultado en formato JSON, donde cada clave sea el nombre del signo y el valor su horóscopo.
-Ejemplo de formato:
+  const prompt = `
+Devuelve EXCLUSIVAMENTE un objeto JSON válido.
+NO escribas texto fuera del JSON.
+NO uses markdown.
+
+Formato exacto:
 {
-  "Aries": "texto del horóscopo",
-  "Tauro": "texto del horóscopo",
+  "Aries": "...",
+  "Tauro": "...",
   ...
 }
-Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
+`;
 
- try {
- const result = await ai.models.generateContent({
-  model,
-  contents: [{ role: "user", parts: [{ text: prompt }] }],
-  config: {
-    responseMimeType: "application/json"
+  try {
+    const result = await ai.models.generateContent({
+      model,
+      contents: [{ role: "user", parts: [{ text: prompt }] }]
+    });
+
+    const text = result.text();
+
+    console.log("📦 RESPUESTA GEMINI RAW:\n", text);
+
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+
+    if (start === -1 || end === -1) {
+      throw new Error("Gemini no devolvió JSON");
+    }
+
+    const json = text.slice(start, end + 1);
+    return JSON.parse(json);
+
+  } catch (error) {
+    console.error("❌ ERROR REAL:", error);
+    const fallback = {};
+    for (const sign of SIGNS) {
+      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
+    }
+    return fallback;
   }
-});
-
-const rawResponse = result.text();
-
-if (!rawResponse) {
-  throw new Error("Respuesta vacía de Gemini");
 }
-   
-return JSON.parse(rawResponse);
 
-} catch (error) {
-  console.error("❌ Error al generar horóscopos:", error);
-  const fallback = {};
-  for (const sign of SIGNS) {
-    fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
-  }
-  return fallback;
-}
-}
 
 // --- Crear index.html con los 12 signos ---
 async function updateIndexHtml() {

@@ -6,13 +6,14 @@ const execAsync = promisify(exec);
 
 // --- Configuración ---
 const apiKey = process.env.GEMINI_API_KEY;
-const model = "gemini-2.5-flash";
+// CORRECCIÓN: El modelo correcto es gemini-1.5-flash o gemini-2.0-flash-exp
+const MODEL_NAME = "gemini-1.5-flash"; 
 
 if (!apiKey) {
   throw new Error("GEMINI_API_KEY no está configurada en los Secrets de GitHub.");
 }
 
-const ai = new GoogleGenAI(apiKey);
+const genAI = new GoogleGenAI(apiKey);
 
 // Lista de los 12 signos
 const SIGNS = [
@@ -30,45 +31,39 @@ const SIGNS = [
   { name: "Piscis", symbol: "♓" }
 ];
 
-// --- Generar horóscopos de los 12 signos en una sola llamada ---
+// --- Generar horóscopos ---
 async function generateAllHoroscopes() {
   console.log("Generando horóscopos para los 12 signos...");
 
-  const prompt = `
-Devuelve EXCLUSIVAMENTE un objeto JSON válido.
-NO escribas texto fuera del JSON.
-NO uses markdown.
-
-Formato exacto:
-{
-  "Aries": "...",
-  "Tauro": "...",
-  ...
-}
-`;
+  const prompt = `Devuelve EXCLUSIVAMENTE un objeto JSON válido con el horóscopo de hoy para los 12 signos zodiacales. 
+  Usa este formato: {"Aries": "...", "Tauro": "...", ...}. 
+  No uses markdown, ni escribas nada fuera del JSON.`;
 
   try {
-    const result = await ai.models.generateContent({
-      model,
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
-    });
+    // CORRECCIÓN: Así es como se inicializa el modelo realmente
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-    const text = result.text();
+    // CORRECCIÓN: La llamada correcta a la API
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
     console.log("📦 RESPUESTA GEMINI RAW:\n", text);
 
+    // Limpiamos la respuesta por si Gemini mete texto extra o bloques ```json
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
 
     if (start === -1 || end === -1) {
-      throw new Error("Gemini no devolvió JSON");
+      throw new Error("Gemini no devolvió un formato JSON válido");
     }
 
-    const json = text.slice(start, end + 1);
-    return JSON.parse(json);
+    const jsonString = text.slice(start, end + 1);
+    return JSON.parse(jsonString);
 
   } catch (error) {
-    console.error("❌ ERROR REAL:", error);
+    console.error("❌ ERROR DETECTADO:", error.message);
+    // Tu sistema de seguridad (fallback)
     const fallback = {};
     for (const sign of SIGNS) {
       fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
@@ -77,8 +72,7 @@ Formato exacto:
   }
 }
 
-
-// --- Crear index.html con los 12 signos ---
+// --- Crear index.html ---
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -117,14 +111,11 @@ async function updateIndexHtml() {
   <div class="container">
     <h1>Horóscopo Diario</h1>
     <p class="date">Actualizado para el día: ${date}</p>
-
     ${horoscopeHtml}
-
     <p class="footer">
     Generado automáticamente con la API de Gemini.<br>
     Última ejecución: ${new Date().toISOString()}
-   </p>
-
+    </p>
   </div>
 </body>
 </html>`;
@@ -136,11 +127,9 @@ async function updateIndexHtml() {
   try {
     await execAsync('git config user.name "github-actions[bot]"');
     await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
-
     await execAsync('git add index.html');
     await execAsync('git commit -m "Horóscopo actualizado automáticamente [skip ci]"');
     await execAsync('git push origin main');
-
     console.log('Cambios subidos a GitHub correctamente.');
   } catch (error) {
     if (error.message.includes('nothing to commit')) {
@@ -151,5 +140,5 @@ async function updateIndexHtml() {
   }
 }
 
-// --- Ejecutar ---
+// Ejecutar
 updateIndexHtml();

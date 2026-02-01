@@ -120,7 +120,11 @@ async function updateIndexHtml() {
 
     ${horoscopeHtml}
 
-    <p class="footer">Generado automáticamente con la API de Gemini.</p>
+    <p class="footer">
+    Generado automáticamente con la API de Gemini.<br>
+    Última ejecución: ${new Date().toISOString()}
+   </p>
+
   </div>
 </body>
 </html>`;

@@ -61,10 +61,14 @@ async function generateAllHoroscopes() {
     const jsonString = text.slice(start, end + 1);
     return JSON.parse(jsonString);
 
-  } catch (error) {
-    console.error("❌ ERROR DETECTADO:", error.message);
-    // Tu sistema de seguridad (fallback)
+ } catch (error) {
+    console.error("--- ¡AQUÍ ESTÁ EL CULPABLE! ---");
+    console.error("NOMBRE DEL ERROR:", error.name);
+    console.error("MENSAJE:", error.message);
+    console.error("------------------------------");
+    
     const fallback = {};
+    // ... resto de tu código
     for (const sign of SIGNS) {
       fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy.";
     }

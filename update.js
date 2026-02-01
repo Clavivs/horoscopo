@@ -45,7 +45,7 @@ Ejemplo de formato:
 Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.`;
 
  try {
-  const result = await ai.models.generateContent({
+ const result = await ai.models.generateContent({
   model,
   contents: [{ role: "user", parts: [{ text: prompt }] }],
   config: {
@@ -53,12 +53,12 @@ Cada horóscopo debe tener máximo 120 palabras y no incluir fechas ni títulos.
   }
 });
 
-const rawResponse = result.response.text();
+const rawResponse = result.text();
 
 if (!rawResponse) {
   throw new Error("Respuesta vacía de Gemini");
 }
-
+   
 return JSON.parse(rawResponse);
 
 } catch (error) {

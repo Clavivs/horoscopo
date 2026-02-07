@@ -2,8 +2,8 @@ name: Actualizar Horóscopo Diario
 
 on:
   schedule:
-    - cron: "0 5 * * *"
-  workflow_dispatch:
+    - cron: "0 5 * * *" # Se ejecuta a las 5:00 AM UTC
+  workflow_dispatch: # Permite ejecutarlo manualmente para probar
 
 permissions:
   contents: write
@@ -19,8 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm' # Optimiza las ejecuciones futuras guardando la caché de módulos
+
       - name: Instalar dependencias
-        run: npm install  
+        run: npm install # Esto instalará @google/generative-ai basándose en tu package.json
+
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -31,5 +34,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Horóscopo actualizado automáticamente" || echo "Sin cambios"
+          git commit -m "Horóscopo actualizado automáticamente" || echo "Sin cambios para commitear"
           git push

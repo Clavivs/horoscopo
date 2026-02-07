@@ -2,8 +2,8 @@ name: Actualizar Horóscopo Diario
 
 on:
   schedule:
-    - cron: "0 5 * * *" # Se ejecuta a las 5:00 AM UTC
-  workflow_dispatch: # Permite ejecutarlo manualmente para probar
+    - cron: "0 5 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,10 +19,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm' # Optimiza las ejecuciones futuras guardando la caché de módulos
+          # Hemos eliminado la línea de cache para evitar el error
 
       - name: Instalar dependencias
-        run: npm install # Esto instalará @google/generative-ai basándose en tu package.json
+        run: |
+          npm install
+          # Esto generará automáticamente el package-lock.json en el servidor
 
       - name: Ejecutar update.js
         env:
@@ -33,6 +35,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Horóscopo actualizado automáticamente" || echo "Sin cambios para commitear"
+          # Añadimos tanto el html como el nuevo archivo lock
+          git add index.html package-lock.json || true
+          git commit -m "Horóscopo y dependencias actualizadas" || echo "Sin cambios"
           git push

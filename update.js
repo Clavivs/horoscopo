@@ -1,5 +1,6 @@
-import pkg from "@google/generative-ai";
-const { GoogleGenAI } = pkg;
+import * as GoogleAI from "@google/generative-ai";
+// Extraemos la clase del espacio de nombres importado
+const { GoogleGenAI } = GoogleAI;
 import * as fs from 'fs/promises';
 
 const apiKey = process.env.GEMINI_API_KEY;

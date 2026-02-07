@@ -20,9 +20,7 @@ jobs:
         with:
           node-version: 20
       - name: Instalar dependencias
-        run: |
-          npm init -y
-          npm install @google/genai
+        run: npm install  
       - name: Ejecutar update.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

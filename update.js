@@ -1,6 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
-// Fuerza a que la consola nos diga qué versión está usando
-import { VERSION } from "@google/genai"; 
+import { GoogleGenAI } from "@google/generative-ai";
+import pkg from "@google/generative-ai";
+const { VERSION } = pkg;
 console.log("Versión de la librería:", VERSION);
 import * as fs from 'fs/promises';
 

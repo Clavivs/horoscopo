@@ -17,21 +17,29 @@ const SIGNS = [
 async function generateAllHoroscopes() {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const prompt = `Devuelve un JSON con el horóscopo de hoy para los 12 signos: {"Aries": "...", ...}. Solo JSON, sin markdown.`;
+    
+    // Prompt más específico para evitar errores de parseo
+    const prompt = `Actúa como un astrólogo profesional. Genera el horóscopo de hoy para los 12 signos del zodiaco. 
+    Devuelve estrictamente un objeto JSON donde las llaves sean los nombres de los signos y los valores sean las predicciones.
+    Ejemplo: {"Aries": "Hoy será un gran día...", "Tauro": "..."}
+    No incluyas explicaciones, ni markdown, ni bloques de código. Solo el JSON puro.`;
     
     const result = await model.generateContent(prompt);
     const response = await result.response;
     let text = response.text();
     
-    // Limpieza de posibles bloques de código markdown
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Limpieza avanzada: Extrae lo que esté entre las llaves { } por si la IA añade texto extra
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No se encontró un formato JSON válido en la respuesta.");
     
-    return JSON.parse(text);
+    const horoscopes = JSON.parse(jsonMatch[0]);
+    return horoscopes;
+
   } catch (error) {
     console.error("DETALLE DEL ERROR:", error.message);
     const fallback = {};
     for (const sign of SIGNS) {
-      fallback[sign.name] = "Error temporal en el servicio de astrología.";
+      fallback[sign.name] = "Las estrellas están tímidas hoy. Inténtalo más tarde.";
     }
     return fallback;
   }
@@ -49,19 +57,32 @@ async function updateIndexHtml() {
 
     let horoscopeHtml = "";
     for (const sign of SIGNS) {
-      horoscopeHtml += `<div class="sign"><h2>${sign.name} ${sign.symbol}</h2><p>${horoscopes[sign.name]}</p></div>`;
+      // Usamos el nombre del signo para buscar en el JSON
+      const prediccion = horoscopes[sign.name] || "Predicción no disponible.";
+      horoscopeHtml += `
+      <div class="sign">
+        <h2>${sign.name} ${sign.symbol}</h2>
+        <p>${prediccion}</p>
+      </div>`;
     }
 
     const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Horóscopo</title>
-    <style>body { font-family: sans-serif; padding: 20px; } .sign { margin-bottom: 20px; }</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horóscopo Diario</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        h1 { text-align: center; color: #2c3e50; text-transform: capitalize; }
+        .sign { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #34495e; border-bottom: 2px solid #3498db; display: inline-block; }
+        p { color: #555; }
+    </style>
 </head>
 <body>
     <h1>${date}</h1>
-    ${horoscopeHtml}
+    <main>${horoscopeHtml}</main>
 </body>
 </html>`;
   

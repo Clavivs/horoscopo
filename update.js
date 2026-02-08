@@ -35,16 +35,9 @@ const SIGNS = [
 async function generateAllHoroscopes() {
   console.log("Generando horóscopos para los 12 signos...");
 
- // Sustituye el prompt actual (línea 49) por este más estricto:
-const prompt = `Genera el horóscopo de hoy para los 12 signos. 
-Responde ÚNICAMENTE con un objeto JSON siguiendo este esquema, sin texto adicional:
-{"Aries": "mensaje", "Tauro": "mensaje", ...}`;
-
-// Y asegúrate de que el modelo esté bien configurado:
-const model = genAI.getGenerativeModel({ 
-  model: MODEL_NAME,
-  generationConfig: { responseMimeType: "application/json" } // Esto obliga a Gemini a responder en JSON
-});
+  const prompt = `Devuelve EXCLUSIVAMENTE un objeto JSON válido con el horóscopo de hoy para los 12 signos zodiacales. 
+  Usa este formato: {"Aries": "...", "Tauro": "...", ...}. 
+  No uses markdown, ni escribas nada fuera del JSON.`;
 
   try {
     // CORRECCIÓN: Así es como se inicializa el modelo realmente

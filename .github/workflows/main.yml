@@ -4,13 +4,12 @@ on:
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -19,23 +18,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # Hemos eliminado la línea de cache para evitar el error
 
       - name: Instalar dependencias
-        run: |
-          npm install
-          # Esto generará automáticamente el package-lock.json en el servidor
+        run: npm install
 
       - name: Ejecutar update.js
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY}}
         run: node update.js
 
       - name: Commit y push cambios
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Añadimos tanto el html como el nuevo archivo lock
-          git add index.html package-lock.json || true
-          git commit -m "Horóscopo y dependencias actualizadas" || echo "Sin cambios"
-          git push
+
+          if git diff --exit-code index.html; then
+            echo "Sin cambios en index.html"
+          else
+            git add index.html
+            git commit -m "Horóscopo actualizado automáticamente"
+            git push
+          fi

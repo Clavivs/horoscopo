@@ -4,73 +4,55 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 const execAsync = promisify(exec);
 
-// --- Configuración ---
 const apiKey = process.env.GEMINI_API_KEY;
-// CORRECCIÓN: El modelo correcto es gemini-1.5-flash o gemini-2.0-flash-exp
-const MODEL_NAME = "gemini-1.5-flash"; 
+// CAMBIO 1: Usamos gemini-2.0-flash-lite, que suele tener cuota cuando el flash normal se agota
+const MODEL_NAME = "gemini-2.0-flash-lite-001"; 
 
 if (!apiKey) {
-  throw new Error("GEMINI_API_KEY no está configurada en los Secrets de GitHub.");
+  throw new Error("GEMINI_API_KEY no está configurada.");
 }
 
 const genAI = new GoogleGenAI(apiKey);
 
-// Lista de los 12 signos
 const SIGNS = [
-  { name: "Aries", symbol: "♈" },
-  { name: "Tauro", symbol: "♉" },
-  { name: "Géminis", symbol: "♊" },
-  { name: "Cáncer", symbol: "♋" },
-  { name: "Leo", symbol: "♌" },
-  { name: "Virgo", symbol: "♍" },
-  { name: "Libra", symbol: "♎" },
-  { name: "Escorpio", symbol: "♏" },
-  { name: "Sagitario", symbol: "♐" },
-  { name: "Capricornio", symbol: "♑" },
-  { name: "Acuario", symbol: "♒" },
-  { name: "Piscis", symbol: "♓" }
+  { name: "Aries", symbol: "♈" }, { name: "Tauro", symbol: "♉" },
+  { name: "Géminis", symbol: "♊" }, { name: "Cáncer", symbol: "♋" },
+  { name: "Leo", symbol: "♌" }, { name: "Virgo", symbol: "♍" },
+  { name: "Libra", symbol: "♎" }, { name: "Escorpio", symbol: "♏" },
+  { name: "Sagitario", symbol: "♐" }, { name: "Capricornio", symbol: "♑" },
+  { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
 ];
 
-// --- Generar horóscopos ---
 async function generateAllHoroscopes() {
-  console.log("Generando horóscopos para los 12 signos...");
-
-  const prompt = `Devuelve EXCLUSIVAMENTE un objeto JSON válido con el horóscopo de hoy para los 12 signos zodiacales. 
-  Usa este formato: {"Aries": "...", "Tauro": "...", ...}. 
-  No uses markdown, ni escribas nada fuera del JSON.`;
+  console.log(`Usando modelo: ${MODEL_NAME}`);
+  
+  // CAMBIO 2: Prompt más estricto
+  const prompt = `Return ONLY a JSON object with daily horoscopes in Spanish for these 12 signs. 
+  Format: {"Aries": "...", "Tauro": "..."}. No markdown, no extra text.`;
 
   try {
-    // CORRECCIÓN: Así es como se inicializa el modelo realmente
-    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+    const model = genAI.getGenerativeModel({ 
+        model: MODEL_NAME,
+        generationConfig: { responseMimeType: "application/json" } // FUERZA JSON
+    });
 
-    // CORRECCIÓN: La llamada correcta a la API
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    console.log("📦 RESPUESTA GEMINI RAW:\n", text);
-
-    // Limpiamos la respuesta por si Gemini mete texto extra o bloques ```json
+    // CAMBIO 3: Limpieza de JSON ultra-segura
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
-
-    if (start === -1 || end === -1) {
-      throw new Error("Gemini no devolvió un formato JSON válido");
-    }
-
-    const jsonString = text.slice(start, end + 1);
-    return JSON.parse(jsonString);
-
- } catch (error) {
-    console.error("--- ¡AQUÍ ESTÁ EL CULPABLE! ---");
-    console.error("NOMBRE DEL ERROR:", error.name);
-    console.error("MENSAJE:", error.message);
-    console.error("------------------------------");
+    if (start === -1) throw new Error("No JSON found in response");
     
+    return JSON.parse(text.slice(start, end + 1));
+
+  } catch (error) {
+    console.error("DETALLE DEL ERROR:", error.message);
+    // Si es error de cuota (429), esto se ejecutará
     const fallback = {};
-    // ... resto de tu código
     for (const sign of SIGNS) {
-      fallback[sign.name] = "Lo siento, hubo un error al obtener el horóscopo de hoy A.";
+      fallback[sign.name] = "El servicio está temporalmente saturado. Inténtalo más tarde.";
     }
     return fallback;
   }

@@ -29,6 +29,7 @@ async function generateAllHoroscopes() {
   const prompt = `Return ONLY a JSON object with daily horoscopes in Spanish for these 12 signs. 
   Format: {"Aries": "...", "Tauro": "..."}. No markdown, no extra text.`;
 
+  for (let i = 0; i < 3; i++) {
   try {
     const model = genAI.getGenerativeModel({ 
         model: MODEL_NAME,
@@ -56,7 +57,7 @@ async function generateAllHoroscopes() {
     return fallback;
   }
 }
-
+} //Fin del FOR
 // --- Crear index.html ---
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {

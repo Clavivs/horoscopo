@@ -5,8 +5,7 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 const apiKey = process.env.GEMINI_API_KEY;
-// CAMBIO 1: Usamos gemini-2.0-flash-lite, que suele tener cuota cuando el flash normal se agota
-const MODEL_NAME = "gemini-2.0-flash-lite-001"; 
+const MODEL_NAME = "gemini-1.5-flash"; 
 
 if (!apiKey) {
   throw new Error("GEMINI_API_KEY no está configurada.");

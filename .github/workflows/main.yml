@@ -2,7 +2,7 @@ name: Actualizar Horóscopo Diario
 
 on:
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "05 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write

@@ -5,7 +5,9 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 const apiKey = process.env.GEMINI_API_KEY;
-const MODEL_NAME = "gemini-1.5-flash"; 
+// con este funciona  pero sale siempre: El servicio está temporalmente saturado. Inténtalo más tarde.
+//const MODEL_NAME = "gemini-1.5-flash"; 
+const MODEL_NAME = "gemini-2.5-flash"; 
 
 if (!apiKey) {
   throw new Error("GEMINI_API_KEY no está configurada.");

@@ -5,7 +5,6 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 const apiKey = process.env.GEMINI_API_KEY;
-// Usamos el modelo más estable para evitar el error de "saturado"
 const MODEL_NAME = "gemini-1.5-flash"; 
 
 if (!apiKey) {
@@ -23,48 +22,50 @@ const SIGNS = [
   { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
 ];
 
+// --- FUNCIÓN MODIFICADA: GENERA UNO A UNO CON PAUSA ---
 async function generateAllHoroscopes() {
-  console.log(`Solicitando horóscopos a: ${MODEL_NAME}`);
-  
-  const prompt = `Actúa como un astrólogo experto. Genera un horóscopo diario corto (máximo 2 frases) para cada uno de los 12 signos del zodiaco en español. 
-  Devuelve EXCLUSIVAMENTE un objeto JSON con este formato: {"Aries": "...", "Tauro": "..."}. 
-  No incluyas markdown, ni bloques de código, ni texto adicional. Solo el JSON puro.`;
+  const horoscopes = {};
+  console.log(`Iniciando generación signo por signo en ${MODEL_NAME}...`);
 
-  try {
-    const model = genAI.getGenerativeModel({ 
-        model: MODEL_NAME,
-        // Relajamos los filtros para que no bloquee predicciones inofensivas
-        safetySettings: [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        ],
-        generationConfig: { responseMimeType: "application/json" }
-    });
+  const model = genAI.getGenerativeModel({ 
+    model: MODEL_NAME,
+    safetySettings: [
+      { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    ]
+  });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let text = response.text();
+  for (const sign of SIGNS) {
+    try {
+      console.log(`Solicitando predicción para ${sign.name}...`);
+      
+      const prompt = `Actúa como un astrólogo experto. Escribe una predicción corta (máximo 2 frases) para el signo ${sign.name} hoy en español. 
+      Responde SOLO con el texto de la predicción, sin mencionar el nombre del signo ni usar formato JSON.`;
 
-    // Limpieza de seguridad extra
-    const start = text.indexOf('{');
-    const end = text.lastIndexOf('}');
-    if (start === -1) throw new Error("No se encontró JSON en la respuesta.");
-    
-    return JSON.parse(text.slice(start, end + 1));
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      horoscopes[sign.name] = response.text().trim();
+      
+      console.log(`✅ ${sign.name} obtenido con éxito.`);
+      
+      // PAUSA DE 15 SEGUNDOS: Para evitar el error de "servicio saturado"
+      if (sign.name !== "Piscis") { // No esperamos después del último
+        console.log("Esperando 15 segundos antes del siguiente signo...");
+        await new Promise(resolve => setTimeout(resolve, 15000));
+      }
 
-  } catch (error) {
-    console.error("ERROR AL GENERAR:", error.message);
-    // Fallback: Si falla, devolvemos un aviso digno para el usuario
-    const fallback = {};
-    for (const sign of SIGNS) {
-      fallback[sign.name] = "Las estrellas están alineándose... Vuelve en unos minutos para tu predicción.";
+    } catch (error) {
+      console.error(`ERROR en ${sign.name}:`, error.message);
+      horoscopes[sign.name] = "Las estrellas están alineándose... Vuelve en unos minutos para tu predicción.";
     }
-    return fallback;
   }
+
+  return horoscopes;
 }
 
+// --- RESTO DEL CÓDIGO IGUAL A TU VERSIÓN ACTUAL ---
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -120,6 +121,7 @@ async function updateIndexHtml() {
     await execAsync('git config user.name "github-actions[bot]"');
     await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
     await execAsync('git add index.html');
+    await execAsync('git commit -m "Horóscopo actualizado por signos [skip ci]"');
     await execAsync('git push origin main');
     console.log('GitHub actualizado correctamente.');
   } catch (error) {

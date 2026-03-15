@@ -1,12 +1,7 @@
 {
-  "name": "horoscopo-grok",
-  "version": "1.0.0",
   "type": "module",
-  "main": "update.js",
   "dependencies": {
-    "openai": "^4.82.0"
-  },
-  "scripts": {
-    "start": "node update.js"
+    "@google/genai": "^0.3.0"
   }
 }
+

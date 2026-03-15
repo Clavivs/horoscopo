@@ -17,15 +17,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # HEMOS QUITADO LA LÍNEA DEL CACHE PARA EVITAR EL ERROR
 
       - name: Install dependencies
-        run: npm install @google/generative-ai
+        run: npm install # Esto leerá el package.json que creamos arriba
 
       - name: Run update script with Retries
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        # Intentará ejecutar el script. Si falla, espera 60s y repite (máx 3 veces)
         run: |
           n=0
           until [ "$n" -ge 3 ]
@@ -39,10 +38,3 @@ jobs:
             echo "El script falló tras 3 intentos."
             exit 1
           fi
-
-      - name: Push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # El script update.js ya tiene la lógica de git add/commit/push
-          # así que aquí solo nos aseguramos de que no rompa el flujo.

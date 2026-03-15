@@ -1,19 +1,22 @@
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai'; // Cambiamos la librería
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 const execAsync = promisify(exec);
 
-const apiKey = process.env.GEMINI_API_KEY;
-// con este funciona  pero sale siempre: El servicio está temporalmente saturado. Inténtalo más tarde.
-//const MODEL_NAME = "gemini-1.5-flash";   si no va, hay que usar la API de Grok
-const MODEL_NAME = "gemini-2.5-flash-lite"; 
+// Cambia la variable de entorno en tu GitHub Secrets a GROK_API_KEY
+const apiKey = process.env.GROK_API_KEY; 
+const MODEL_NAME = "grok-2-latest"; // O "grok-beta" según tu acceso
 
 if (!apiKey) {
-  throw new Error("GEMINI_API_KEY no está configurada.");
+  throw new Error("GROK_API_KEY no está configurada.");
 }
 
-const genAI = new GoogleGenAI(apiKey);
+// Configuración para xAI (Grok)
+const openai = new OpenAI({
+  apiKey: apiKey,
+  baseURL: "https://api.x.ai/v1", // URL específica de Grok
+});
 
 const SIGNS = [
   { name: "Aries", symbol: "♈" }, { name: "Tauro", symbol: "♉" },
@@ -27,22 +30,23 @@ const SIGNS = [
 async function generateAllHoroscopes() {
   console.log(`Usando modelo: ${MODEL_NAME}`);
   
-  // CAMBIO 2: Prompt más estricto
   const prompt = `Return ONLY a JSON object with daily horoscopes in Spanish for these 12 signs. 
   Format: {"Aries": "...", "Tauro": "..."}. No markdown, no extra text.`;
 
-  for (let i = 0; i < 3; i++) {
   try {
-    const model = genAI.getGenerativeModel({ 
-        model: MODEL_NAME,
-        generationConfig: { responseMimeType: "application/json" } // FUERZA JSON
+    const response = await openai.chat.completions.create({
+      model: MODEL_NAME,
+      messages: [
+        { role: "system", content: "Eres un astrólogo experto que solo responde en formato JSON puro." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      response_format: { type: "json_object" } // Grok también soporta modo JSON
     });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = response.choices[0].message.content;
 
-    // CAMBIO 3: Limpieza de JSON ultra-segura
+    // Limpieza de JSON
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
     if (start === -1) throw new Error("No JSON found in response");
@@ -51,16 +55,14 @@ async function generateAllHoroscopes() {
 
   } catch (error) {
     console.error("DETALLE DEL ERROR:", error.message);
-    // Si es error de cuota (429), esto se ejecutará
     const fallback = {};
     for (const sign of SIGNS) {
-      fallback[sign.name] = "El servicio está temporalmente saturado. Inténtalo más tarde.";
+      fallback[sign.name] = "El servicio de Grok no está disponible ahora mismo.";
     }
     return fallback;
   }
 }
-} //Fin del FOR
-// --- Crear index.html ---
+
 async function updateIndexHtml() {
   const date = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -70,7 +72,7 @@ async function updateIndexHtml() {
 
   let horoscopeHtml = "";
   for (const sign of SIGNS) {
-    const text = horoscopes[sign.name] || "Lo siento, hubo un error al obtener el horóscopo de hoy B.";
+    const text = horoscopes[sign.name] || "Error al obtener el horóscopo.";
     horoscopeHtml += `
       <div class="sign">
         <h2>${sign.name} ${sign.symbol}</h2>
@@ -101,7 +103,7 @@ async function updateIndexHtml() {
     <p class="date">Actualizado para el día: ${date}</p>
     ${horoscopeHtml}
     <p class="footer">
-    Generado automáticamente con la API de Gemini.<br>
+    Generado automáticamente con la API de Grok (xAI).<br>
     Última ejecución: ${new Date().toISOString()}
     </p>
   </div>
@@ -111,22 +113,15 @@ async function updateIndexHtml() {
   await fs.writeFile('index.html', newContent);
   console.log('index.html actualizado exitosamente.');
 
-  // --- Commit y push automático ---
   try {
     await execAsync('git config user.name "github-actions[bot]"');
     await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
     await execAsync('git add index.html');
-    await execAsync('git commit -m "Horóscopo actualizado automáticamente [skip ci]"');
     await execAsync('git push origin main');
     console.log('Cambios subidos a GitHub correctamente.');
   } catch (error) {
-    if (error.message.includes('nothing to commit')) {
-      console.log('No hay cambios en index.html, no se hace commit.');
-    } else {
-      console.error('Error al hacer commit/push:', error);
-    }
+    console.error('Error al hacer commit/push:', error);
   }
 }
 
-// Ejecutar
 updateIndexHtml();

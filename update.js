@@ -14,12 +14,12 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const SIGNS = [
-  { name: "Aries", symbol: "♈" }, { name: "Tauro", symbol: "♉" },
-  { name: "Géminis", symbol: "♊" }, { name: "Cáncer", symbol: "♋" },
-  { name: "Leo", symbol: "♌" }, { name: "Virgo", symbol: "♍" },
-  { name: "Libra", symbol: "♎" }, { name: "Escorpio", symbol: "♏" },
-  { name: "Sagitario", symbol: "♐" }, { name: "Capricornio", symbol: "♑" },
-  { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
+  { name: "Aries", symbol: "♈" } //, { name: "Tauro", symbol: "♉" },
+ // { name: "Géminis", symbol: "♊" }, { name: "Cáncer", symbol: "♋" },
+//  { name: "Leo", symbol: "♌" }, { name: "Virgo", symbol: "♍" },
+//  { name: "Libra", symbol: "♎" }, { name: "Escorpio", symbol: "♏" },
+//  { name: "Sagitario", symbol: "♐" }, { name: "Capricornio", symbol: "♑" },
+//  { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
 ];
 
 async function generateAllHoroscopes() {

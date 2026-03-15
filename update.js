@@ -1,22 +1,18 @@
-import OpenAI from 'openai'; // Cambiamos la librería
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 const execAsync = promisify(exec);
 
-// Cambia la variable de entorno en tu GitHub Secrets a GROK_API_KEY
-const apiKey = process.env.GROK_API_KEY; 
-const MODEL_NAME = "grok-2-latest"; // O "grok-beta" según tu acceso
+const apiKey = process.env.GEMINI_API_KEY;
+// Usamos el modelo más estable para evitar el error de "saturado"
+const MODEL_NAME = "gemini-1.5-flash"; 
 
 if (!apiKey) {
-  throw new Error("GROK_API_KEY no está configurada.");
+  throw new Error("GEMINI_API_KEY no está configurada.");
 }
 
-// Configuración para xAI (Grok)
-const openai = new OpenAI({
-  apiKey: apiKey,
-  baseURL: "https://api.x.ai/v1", // URL específica de Grok
-});
+const genAI = new GoogleGenerativeAI(apiKey);
 
 const SIGNS = [
   { name: "Aries", symbol: "♈" }, { name: "Tauro", symbol: "♉" },
@@ -28,36 +24,42 @@ const SIGNS = [
 ];
 
 async function generateAllHoroscopes() {
-  console.log(`Usando modelo: ${MODEL_NAME}`);
+  console.log(`Solicitando horóscopos a: ${MODEL_NAME}`);
   
-  const prompt = `Return ONLY a JSON object with daily horoscopes in Spanish for these 12 signs. 
-  Format: {"Aries": "...", "Tauro": "..."}. No markdown, no extra text.`;
+  const prompt = `Actúa como un astrólogo experto. Genera un horóscopo diario corto (máximo 2 frases) para cada uno de los 12 signos del zodiaco en español. 
+  Devuelve EXCLUSIVAMENTE un objeto JSON con este formato: {"Aries": "...", "Tauro": "..."}. 
+  No incluyas markdown, ni bloques de código, ni texto adicional. Solo el JSON puro.`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: MODEL_NAME,
-      messages: [
-        { role: "system", content: "Eres un astrólogo experto que solo responde en formato JSON puro." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-      response_format: { type: "json_object" } // Grok también soporta modo JSON
+    const model = genAI.getGenerativeModel({ 
+        model: MODEL_NAME,
+        // Relajamos los filtros para que no bloquee predicciones inofensivas
+        safetySettings: [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        ],
+        generationConfig: { responseMimeType: "application/json" }
     });
 
-    const text = response.choices[0].message.content;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let text = response.text();
 
-    // Limpieza de JSON
+    // Limpieza de seguridad extra
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
-    if (start === -1) throw new Error("No JSON found in response");
+    if (start === -1) throw new Error("No se encontró JSON en la respuesta.");
     
     return JSON.parse(text.slice(start, end + 1));
 
   } catch (error) {
-    console.error("DETALLE DEL ERROR:", error.message);
+    console.error("ERROR AL GENERAR:", error.message);
+    // Fallback: Si falla, devolvemos un aviso digno para el usuario
     const fallback = {};
     for (const sign of SIGNS) {
-      fallback[sign.name] = "El servicio de Grok no está disponible ahora mismo.";
+      fallback[sign.name] = "Las estrellas están alineándose... Vuelve en unos minutos para tu predicción.";
     }
     return fallback;
   }
@@ -72,7 +74,7 @@ async function updateIndexHtml() {
 
   let horoscopeHtml = "";
   for (const sign of SIGNS) {
-    const text = horoscopes[sign.name] || "Error al obtener el horóscopo.";
+    const text = horoscopes[sign.name] || "Contenido no disponible temporalmente.";
     horoscopeHtml += `
       <div class="sign">
         <h2>${sign.name} ${sign.symbol}</h2>
@@ -86,41 +88,42 @@ async function updateIndexHtml() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horóscopo Diario</title>
+  <title>Horóscopo Diario Gratis</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-    .container { max-width: 800px; margin: 30px auto; padding: 25px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    h1 { color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px; text-align: center; }
-    .date { color: #5bc0de; font-weight: bold; text-align: center; margin-bottom: 20px; }
-    .sign { margin-top: 25px; text-align: justify; }
-    .sign h2 { color: #d9534f; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-    .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
+    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: linear-gradient(to bottom, #24243e, #302b63, #0f0c29); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #444; }
+    h1 { color: #f0ad4e; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+    .date { color: #5bc0de; font-weight: bold; text-align: center; margin-bottom: 20px; font-style: italic; }
+    .sign { margin-top: 25px; padding: 15px; border-bottom: 1px dashed #555; transition: transform 0.3s; }
+    .sign:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
+    .sign h2 { color: #f0ad4e; margin-top: 0; }
+    .sign p { line-height: 1.6; font-size: 1.1em; color: #ddd; }
+    .footer { margin-top: 40px; font-size: 0.8em; color: #888; text-align: center; border-top: 1px solid #444; padding-top: 20px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Horóscopo Diario</h1>
-    <p class="date">Actualizado para el día: ${date}</p>
+    <p class="date">Predicciones para hoy: ${date}</p>
     ${horoscopeHtml}
     <p class="footer">
-    Generado automáticamente con la API de Grok (xAI).<br>
-    Última ejecución: ${new Date().toISOString()}
+    Generado por Inteligencia Artificial • © ${new Date().getFullYear()}<br>
+    Última actualización: ${new Date().toLocaleTimeString('es-ES')}
     </p>
   </div>
 </body>
 </html>`;
 
   await fs.writeFile('index.html', newContent);
-  console.log('index.html actualizado exitosamente.');
-
+  
   try {
     await execAsync('git config user.name "github-actions[bot]"');
     await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
     await execAsync('git add index.html');
     await execAsync('git push origin main');
-    console.log('Cambios subidos a GitHub correctamente.');
+    console.log('GitHub actualizado correctamente.');
   } catch (error) {
-    console.error('Error al hacer commit/push:', error);
+    console.log('No hubo cambios o error en git:', error.message);
   }
 }
 

@@ -1,10 +1,9 @@
-name: Actualizar Horóscopo Diario
+name: Update Horoscope Daily
 
 on:
   schedule:
-    # Se ejecuta todos los días a las 06:00 AM UTC
     - cron: '0 6 * * *'
-  workflow_dispatch: # Permite ejecutarlo manualmente desde la pestaña Actions
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,21 +20,29 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm install openai
-          # Si tienes un package.json, usa 'npm install' a secas
-          # Pero forzamos openai por si acaso no está en el repo.
+        run: npm install @google/generative-ai
 
-      - name: Run update script
+      - name: Run update script with Retries
         env:
-          # IMPORTANTE: Asegúrate de que el nombre coincida 
-          # con el que pusiste en Settings > Secrets del repo
-          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-        run: node update.js
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # Intentará ejecutar el script. Si falla, espera 60s y repite (máx 3 veces)
+        run: |
+          n=0
+          until [ "$n" -ge 3 ]
+          do
+             node update.js && break
+             n=$((n+1))
+             echo "La API falló o está saturada. Reintento $n de 3 en 60 segundos..."
+             sleep 60
+          done
+          if [ $n -ge 3 ]; then
+            echo "El script falló tras 3 intentos."
+            exit 1
+          fi
 
       - name: Push changes
         run: |
-          # El script ya hace el push, pero nos aseguramos de que
-          # la sesión de git tenga permisos.
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # El script update.js ya tiene la lógica de git add/commit/push
+          # así que aquí solo nos aseguramos de que no rompa el flujo.

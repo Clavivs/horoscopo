@@ -30,8 +30,8 @@ async function generateAllHoroscopes() {
   console.log(`Solicitando horóscopos a Groq (${MODEL_NAME})...`);
   
   // Con Groq podemos pedir todos a la vez sin que se sature
-  const prompt = `Actúa como un astrólogo experto. Genera un horóscopo diario corto (2 frases) para cada uno de los 12 signos en español. 
-  Devuelve SOLO un objeto JSON con este formato: {"Aries": "...", "Tauro": "..."}. Sin texto extra.`;
+  const prompt = `Actúa como un astrólogo experto. Genera un horóscopo diario corto (2 frases) para cada uno de los 12 signos en español. Usa un tono místico pero alentador, 
+  evita frases hechas y céntrate en la energía del día. Devuelve SOLO un objeto JSON con este formato: {"Aries": "...", "Tauro": "..."}. Sin texto extra.`;
 
   try {
     const response = await groq.chat.completions.create({
@@ -95,7 +95,7 @@ async function updateIndexHtml() {
     <h1>Horóscopo Diario</h1>
     <p class="date">${date}</p>
     ${horoscopeHtml}
-    <p class="footer">Generado con Groq AI • ${new Date().toLocaleTimeString('es-ES')}</p>
+    <p class="footer">Nuestra IA analiza las posiciones planetarias en tiempo real para ofrecerte una visión única • ${new Date().toLocaleTimeString('es-ES')}</p>
   </div>
 </body>
 </html>`;

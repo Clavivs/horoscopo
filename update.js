@@ -1,65 +1,59 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 const execAsync = promisify(exec);
 
-const apiKey = process.env.GEMINI_API_KEY;
-const MODEL_NAME = "gemini-1.5-flash"; 
+// Ahora usamos la clave de GROQ
+const apiKey = process.env.GROQ_API_KEY; 
+const MODEL_NAME = "llama-3.3-70b-versatile"; // El modelo más potente y gratis de Groq
 
 if (!apiKey) {
-  throw new Error("GEMINI_API_KEY no está configurada.");
+  throw new Error("GROQ_API_KEY no está configurada en los Secrets de GitHub.");
 }
 
-const genAI = new GoogleGenerativeAI(apiKey);
+const groq = new OpenAI({
+  apiKey: apiKey,
+  baseURL: "https://api.groq.com/openai/v1", // Servidor de Groq
+});
 
 const SIGNS = [
-  { name: "Aries", symbol: "♈" } //, { name: "Tauro", symbol: "♉" },
- // { name: "Géminis", symbol: "♊" }, { name: "Cáncer", symbol: "♋" },
-//  { name: "Leo", symbol: "♌" }, { name: "Virgo", symbol: "♍" },
-//  { name: "Libra", symbol: "♎" }, { name: "Escorpio", symbol: "♏" },
-//  { name: "Sagitario", symbol: "♐" }, { name: "Capricornio", symbol: "♑" },
-//  { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
+  { name: "Aries", symbol: "♈" }, { name: "Tauro", symbol: "♉" },
+  { name: "Géminis", symbol: "♊" }, { name: "Cáncer", symbol: "♋" },
+  { name: "Leo", symbol: "♌" }, { name: "Virgo", symbol: "♍" },
+  { name: "Libra", symbol: "♎" }, { name: "Escorpio", symbol: "♏" },
+  { name: "Sagitario", symbol: "♐" }, { name: "Capricornio", symbol: "♑" },
+  { name: "Acuario", symbol: "♒" }, { name: "Piscis", symbol: "♓" }
 ];
 
 async function generateAllHoroscopes() {
-  const horoscopes = {};
-  console.log(`Iniciando generación con pausas obligatorias...`);
+  console.log(`Solicitando horóscopos a Groq (${MODEL_NAME})...`);
+  
+  // Con Groq podemos pedir todos a la vez sin que se sature
+  const prompt = `Actúa como un astrólogo experto. Genera un horóscopo diario corto (2 frases) para cada uno de los 12 signos en español. 
+  Devuelve SOLO un objeto JSON con este formato: {"Aries": "...", "Tauro": "..."}. Sin texto extra.`;
 
-  // Configuramos el modelo sin filtros complejos para evitar errores de importación
-  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  try {
+    const response = await groq.chat.completions.create({
+      model: MODEL_NAME,
+      messages: [
+        { role: "system", content: "Eres un astrólogo que solo responde en JSON puro." },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" } // Esto fuerza a Groq a darte un JSON perfecto
+    });
 
-  for (const sign of SIGNS) {
-    try {
-      console.log(`Solicitando ${sign.name}...`);
-      
-      const prompt = `Escribe un horóscopo muy corto para ${sign.name} hoy en español. Máximo 2 frases. Solo el texto.`;
+    const text = response.choices[0].message.content;
+    return JSON.parse(text);
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text().trim();
-      
-      if (text) {
-        horoscopes[sign.name] = text;
-        console.log(`✅ ${sign.name} ok.`);
-      } else {
-        throw new Error("Respuesta vacía");
-      }
-
-    } catch (error) {
-      console.error(`❌ Error en ${sign.name}:`, error.message);
-      horoscopes[sign.name] = "Las estrellas están alineándose... Vuelve en unos minutos.";
+  } catch (error) {
+    console.error("ERROR EN GROQ:", error.message);
+    const fallback = {};
+    for (const sign of SIGNS) {
+      fallback[sign.name] = "Predicción en camino... las estrellas están cargando.";
     }
-
-    // LA PAUSA AHORA ESTÁ FUERA DEL TRY/CATCH
-    // Esto garantiza que el script tarde 180 segundos (3 min) sí o sí.
-    if (sign.name !== "Piscis") {
-      console.log("Esperando 15 segundos para no saturar la API...");
-      await new Promise(resolve => setTimeout(resolve, 15000));
-    }
+    return fallback;
   }
-
-  return horoscopes;
 }
 
 async function updateIndexHtml() {
@@ -71,7 +65,7 @@ async function updateIndexHtml() {
 
   let horoscopeHtml = "";
   for (const sign of SIGNS) {
-    const text = horoscopes[sign.name] || "Contenido no disponible.";
+    const text = horoscopes[sign.name] || "No disponible.";
     horoscopeHtml += `
       <div class="sign">
         <h2>${sign.name} ${sign.symbol}</h2>
@@ -87,12 +81,13 @@ async function updateIndexHtml() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Horóscopo Diario Gratis</title>
   <style>
-    body { font-family: sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
-    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
+    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
     h1 { color: #f0ad4e; text-align: center; }
-    .date { color: #5bc0de; text-align: center; }
-    .sign { margin-top: 20px; padding: 10px; border-bottom: 1px solid #333; }
-    .footer { font-size: 0.8em; text-align: center; margin-top: 20px; }
+    .date { color: #5bc0de; text-align: center; font-weight: bold; }
+    .sign { margin-top: 20px; padding: 15px; border-bottom: 1px dashed #444; }
+    .sign h2 { color: #f0ad4e; margin: 0; }
+    .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
   </style>
 </head>
 <body>
@@ -100,7 +95,7 @@ async function updateIndexHtml() {
     <h1>Horóscopo Diario</h1>
     <p class="date">${date}</p>
     ${horoscopeHtml}
-    <p class="footer">Actualizado: ${new Date().toLocaleTimeString('es-ES')}</p>
+    <p class="footer">Generado con Groq AI • ${new Date().toLocaleTimeString('es-ES')}</p>
   </div>
 </body>
 </html>`;
@@ -111,11 +106,11 @@ async function updateIndexHtml() {
     await execAsync('git config user.name "github-actions[bot]"');
     await execAsync('git config user.email "github-actions[bot]@users.noreply.github.com"');
     await execAsync('git add index.html');
-    await execAsync('git commit -m "Update horoscopo"');
+    await execAsync('git commit -m "Horóscopo actualizado con Groq [skip ci]"');
     await execAsync('git push origin main');
-    console.log('GitHub actualizado.');
-  } catch (e) {
-    console.log('Git sin cambios.');
+    console.log('GitHub actualizado con éxito.');
+  } catch (error) {
+    console.log('Sin cambios en el repo.');
   }
 }
 

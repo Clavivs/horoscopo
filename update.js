@@ -66,15 +66,20 @@ async function updateIndexHtml() {
   // GENERADOR AUTOMÁTICO DE MENÚ ANIDADO
   let menuHtml = "";
   for (const s1 of SIGNS) {
-    menuHtml += `
-      <div class="submenu-container">
-        <a href="#">${s1.symbol} ${s1.name} <span>&rsaquo;</span></a>
-        <div class="submenu-content">`;
-    for (const s2 of SIGNS) {
-      menuHtml += `<a href="${s1.slug}-${s2.slug}.html">${s1.name} + ${s2.name}</a>`;
-    }
-    menuHtml += `</div></div>`;
+  menuHtml += `
+    <div class="submenu-container">
+      <a href="#">${s1.symbol} ${s1.name} <span>&rsaquo;</span></a>
+      <div class="submenu-content">`;
+  for (const s2 of SIGNS) {
+    // Lógica para que el nombre del archivo sea siempre alfabético
+    // Ejemplo: Si es Tauro y Aries, el archivo será aries-tauro.html
+    const pair = [s1.slug, s2.slug].sort(); 
+    const fileName = `${pair[0]}-${pair[1]}.html`;
+    
+    menuHtml += `<a href="${fileName}">${s1.name} + ${s2.name}</a>`;
   }
+  menuHtml += `</div></div>`;
+}
 
   const newContent = `<!DOCTYPE html>
 <html lang="es">

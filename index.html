@@ -7,8 +7,18 @@
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
     .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
-    h1 { color: #f0ad4e; text-align: center; }
-    .date { color: #5bc0de; text-align: center; font-weight: bold; }
+    h1 { color: #f0ad4e; text-align: center; margin-bottom: 10px; }
+    .date { color: #5bc0de; text-align: center; font-weight: bold; margin-bottom: 20px; }
+    
+    /* Estilos del Menú Desplegable */
+    .nav-menu { display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+    .dropdown { position: relative; display: inline-block; }
+    .dropbtn { background-color: #f0ad4e; color: #1a1a2e; padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
+    .dropdown-content { display: none; position: absolute; background-color: #222; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; border-radius: 5px; }
+    .dropdown-content a { color: #eee; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #333; }
+    .dropdown-content a:hover { background-color: #333; color: #f0ad4e; }
+    .dropdown:hover .dropdown-content { display: block; }
+    
     .sign { margin-top: 20px; padding: 15px; border-bottom: 1px dashed #444; }
     .sign h2 { color: #f0ad4e; margin: 0; }
     .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
@@ -16,70 +26,80 @@
 </head>
 <body>
   <div class="container">
+    <nav class="nav-menu">
+      <div class="dropdown">
+        <button class="dropbtn">Compatibilidades ▾</button>
+        <div class="dropdown-content">
+          <a href="#">Aries con Aries</a>
+          <a href="#">Aries con Piscis</a>
+        </div>
+      </div>
+    </nav>
+
     <h1>Horóscopo Diario</h1>
     <p class="date">domingo, 12 de abril de 2026</p>
     
       <div class="sign">
         <h2>Aries ♈</h2>
-        <p>La energía del universo te guía hacia una jornada de descubrimientos y acciones valientes, prepárate para enfrentar nuevos desafíos con confianza. La luna llena ilumina tu camino, revelando oportunidades ocultas.</p>
+        <p>La energía celestial te impulsa a tomar decisiones valientes y avanzar con confianza hacia tus objetivos, mientras que la luna llena ilumina tu camino y te guía hacia la victoria. La confianza en ti mismo es la clave para desbloquear tus potencialidades.</p>
       </div>
     
       <div class="sign">
         <h2>Tauro ♉</h2>
-        <p>La estabilidad y la calma prevalecen en tu entorno, busca equilibrio interno y permite que la armonía guíe tus decisiones. Un nuevo ciclo comienza, lleno de promesas y posibilidades.</p>
+        <p>El universo te regala un día de estabilidad y armonía, donde tus esfuerzos y dedicación serán recompensados con creces, y la conexión con la naturaleza te renueva y te llena de vida. Aprovecha este momento para sembrar las semillas de tus sueños y verlos crecer.</p>
       </div>
     
       <div class="sign">
         <h2>Géminis ♊</h2>
-        <p>La curiosidad y la creatividad se unen en un baile cósmico, abrázalas para encontrar soluciones innovadoras a problemas antiguos. Tu mente es un faro que ilumina el camino hacia la comprensión.</p>
+        <p>La energía del día te llena de curiosidad y deseos de explorar nuevos horizontes, mientras que Mercurio te guía hacia la comunicación efectiva y la resolución de tus dudas. No tengas miedo de preguntar y buscar respuestas, el conocimiento es poder.</p>
       </div>
     
       <div class="sign">
         <h2>Cáncer ♋</h2>
-        <p>La intuición te habla en susurros, escucha atentamente para descubrir verdades profundas sobre ti mismo y tu lugar en el mundo. La energía lunar te rodea con amor y protección.</p>
+        <p>La luna llena te rodea de amor y compasión, recordándote que eres fuerte y capaz de superar cualquier obstáculo, y que tus seres queridos están allí para apoyarte. Aprovecha esta energía para conectar con tus emociones y nutrir tu alma.</p>
       </div>
     
       <div class="sign">
         <h2>Leo ♌</h2>
-        <p>La pasión y el coraje arden en tu interior, canalízalos para crear algo nuevo y emocionante. Tu brillo es contagious, ilumina el camino para aquellos que te rodean.</p>
+        <p>El sol brilla sobre ti, iluminando tu camino y guiándote hacia la realización de tus sueños, mientras que la confianza en ti mismo te hace invencible. No tengas miedo de brillar y dejar que tu luz ilumine el mundo.</p>
       </div>
     
       <div class="sign">
         <h2>Virgo ♍</h2>
-        <p>La precisión y la dedicación son tus aliadas, enfócate en los detalles para dar forma a tus proyectos y sueños. La perfección es un viaje, no un destino.</p>
+        <p>La energía del día te llama a la reflexión y la introspección, invitándote a analizar tus pensamientos y emociones, y a encontrar la serenidad en el silencio. Aprovecha este momento para rejuvenecer tu espíritu y renovar tu conexión con el universo.</p>
       </div>
     
       <div class="sign">
         <h2>Libra ♎</h2>
-        <p>La armonía y el equilibrio son tu meta, busca el punto medio en todas tus interacciones. La belleza y la justicia te guían hacia un mañana más luminoso.</p>
+        <p>El universo te regala un día de equilibrio y armonía, donde la justicia y la igualdad prevalecen, y la belleza y la creatividad te rodean. Aprovecha esta energía para crear algo hermoso y significativo, y para nutrir tus relaciones con amor y respeto.</p>
       </div>
     
       <div class="sign">
         <h2>Escorpio ♏</h2>
-        <p>La intensidad y la profundidad te llevan a explorar los misterios de tu alma, no tengas miedo de enfrentar tus sombras. La transformación es un proceso, confía en el universo.</p>
+        <p>La energía oscura te llama a la transformación y el renacimiento, invitándote a dejar ir lo que ya no te sirve y a renacer con fuerza y determinación. No tengas miedo de sumergirte en las profundidades de tu alma y de emergir renovado y fortalecido.</p>
       </div>
     
       <div class="sign">
         <h2>Sagitario ♐</h2>
-        <p>La expansión y el crecimiento son tu camino, busca horizontes nuevos y experiencias que enriquezcan tu espíritu. La aventura te llama, responde con valentía.</p>
+        <p>La energía expansiva te impulsa a explorar nuevos horizontes y a buscar la verdad, mientras que Júpiter te guía hacia la sabiduría y la iluminación. Aprovecha este momento para ampliar tus conocimientos y para conectar con la grandeza del universo.</p>
       </div>
     
       <div class="sign">
         <h2>Capricornio ♑</h2>
-        <p>La disciplina y la responsabilidad son tus herramientas, úsalas para construir un futuro sólido y lleno de logros. La perseverancia es tu mayor aliada.</p>
+        <p>El universo te regala un día de responsabilidad y disciplina, donde tus esfuerzos y dedicación serán recompensados con creces, y la perseverancia te lleva al éxito. Aprovecha este momento para establecer tus objetivos y trabajar hacia la realización de tus sueños.</p>
       </div>
     
       <div class="sign">
         <h2>Acuario ♒</h2>
-        <p>La innovación y la libertad te inspiran, permite que tu espíritu creativo fluya hacia nuevas posibilidades. La humanidad te necesita, contribuye con tu luz.</p>
+        <p>La energía innovadora te llama a la creatividad y la inventiva, invitándote a buscar soluciones nuevas y originales para los desafíos que se presentan, y a conectar con la humanidad y el planeta. Aprovecha este momento para generar cambios positivos y para dejar tu huella en el mundo.</p>
       </div>
     
       <div class="sign">
         <h2>Piscis ♓</h2>
-        <p>La sensibilidad y la empatía te conectan con el corazón del universo, abraza la compasión y la entendimiento. La espiritualidad es tu guía, confía en su sabiduría.</p>
+        <p>La energía espiritual te rodea de misticismo y conexión con el universo, recordándote que eres parte de algo más grande que tú mismo, y que la compasión y la empatía te llevan a la iluminación. Aprovecha este momento para conectar con tu intuición y para encontrar la paz interior.</p>
       </div>
     
-    <p class="footer">Nuestra IA analiza las posiciones planetarias en tiempo real para ofrecerte una visión única • 7:14:48</p>
+    <p class="footer">Nuestra IA analiza las posiciones planetarias en tiempo real para ofrecerte una visión única • 10:08:37</p>
   </div>
 </body>
 </html>

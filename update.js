@@ -107,7 +107,7 @@ async function updateIndexHtml() {
         <button class="dropbtn">Compatibilidades ▾</button>
         <div class="dropdown-content">
           <a href="aries-aries.html">Aries con Aries</a>
-          <a href="#">Aries con Piscis</a>
+          <a href="aries-piscis.html">Aries con Piscis</a>
         </div>
       </div>
     </nav>

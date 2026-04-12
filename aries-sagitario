@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compatibilidad: Aries + Sagitario</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
+    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
+    h1 { color: #f0ad4e; text-align: center; }
+    .back-link { display: block; text-align: center; margin-bottom: 20px; color: #5bc0de; text-decoration: none; font-weight: bold; }
+    .back-link:hover { text-decoration: underline; }
+    .score-container { text-align: center; margin: 25px 0; }
+    .score-bar { background: #333; border-radius: 20px; height: 20px; width: 100%; margin-top: 10px; overflow: hidden; }
+    .score-fill { background: linear-gradient(90deg, #ff4500, #9370db); height: 100%; width: 92%; } /* 92% de afinidad */
+    .section { margin-top: 25px; line-height: 1.6; }
+    .section h2 { color: #5bc0de; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← Volver al Horóscopo Diario</a>
+    
+    <h1>Compatibilidad Aries + Sagitario ♈♐</h1>
+    
+    <div class="score-container">
+      <strong>Afinidad General: 92%</strong>
+      <div class="score-bar">
+        <div class="score-fill"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Dinamismo sin Límites</h2>
+      <p>Cuando Aries y Sagitario se juntan, el mundo se les queda pequeño. Ambos comparten un amor insaciable por la aventura y la novedad. Sagitario aporta la visión filosófica y el deseo de explorar horizontes lejanos, mientras que Aries aporta la energía necesaria para dar el primer paso y conquistar esos nuevos territorios. Es una relación vibrante y llena de luz.</p>
+    </div>
+
+    <div class="section">
+      <h2>Verdad y Libertad</h2>
+      <p>Lo mejor de esta pareja es que ambos valoran la independencia. No se asfixian mutuamente; al contrario, se impulsan a crecer. Son extremadamente honestos entre sí (a veces demasiado), pero como ninguno de los dos suele ser rencoroso, las discusiones se olvidan rápido con una nueva broma o un plan de viaje improvisado. Son, ante todo, los mejores amigos.</p>
+    </div>
+
+    <div class="section">
+      <h2>Desafíos: La falta de "Tierra"</h2>
+      <p>El único peligro real es que ambos son tan impulsivos que pueden descuidar las responsabilidades cotidianas o los detalles prácticos de la vida. A veces, su franqueza brutal puede herir, aunque no sea la intención. Deben aprender a aterrizar de vez en cuando para que sus grandes proyectos no se queden solo en hermosas ideas.</p>
+    </div>
+
+    <div class="section">
+      <h2>Consejo del Oráculo</h2>
+      <p>Aries, deja que Sagitario te enseñe a ver el cuadro completo de la vida. Sagitario, aprecia la lealtad y el fuego protector de Aries. Si lográis mantener un pie en la realidad mientras el otro vuela por el mundo, nada podrá detener vuestra expansión conjunta.</p>
+    </div>
+
+    <p class="footer">Análisis de compatibilidad astrológica generada por IA • 2026</p>
+  </div>
+</body>
+</html>

@@ -84,7 +84,7 @@ for (const s1 of SIGNS) {
 
 menuHtml += '</div>'; // Cierre del contenedor
 
-  const newContent = `<!DOCTYPE html>
+const newContent = `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -92,31 +92,77 @@ menuHtml += '</div>'; // Cierre del contenedor
   <title>Horóscopo Diario Gratis</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
-    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
+    .container { max-width: 900px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
     h1 { color: #f0ad4e; text-align: center; margin-bottom: 10px; }
     .date { color: #5bc0de; text-align: center; font-weight: bold; margin-bottom: 20px; }
     
-    /* --- Estilos Menú Multinivel --- */
+    /* --- Estilos Menú Multinivel (Grilla 2x6) --- */
     .nav-menu { display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 1px solid #444; padding-bottom: 15px; }
-    .dropdown { position: relative; display: inline-block; }
+    .dropdown { position: relative; display: inline-block; width: 100%; text-align: center; }
     .dropbtn { background-color: #f0ad4e; color: #1a1a2e; padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
     
-    /* Primer nivel: Lista de signos */
-    .dropdown-content { display: none; position: absolute; background-color: #222; min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); z-index: 10; border-radius: 5px; }
+    /* Contenedor de los 12 signos */
+    .dropdown-content { 
+      display: none; 
+      position: absolute; 
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #222; 
+      min-width: 600px; /* Ancho suficiente para 6 columnas */
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5); 
+      z-index: 10; 
+      border-radius: 5px; 
+      padding: 10px;
+    }
+
+    /* AQUÍ SE DEFINE LA FILA DE 6 */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 6 columnas iguales */
+      gap: 5px;
+    }
+
     .dropdown:hover .dropdown-content { display: block; }
     
     .submenu-container { position: relative; }
-    .dropdown-content a { color: #eee; padding: 12px 16px; text-decoration: none; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
-    .dropdown-content a:hover { background-color: #333; color: #f0ad4e; }
+    .dropdown-content a.main-sign { 
+      color: #eee; 
+      padding: 10px; 
+      text-decoration: none; 
+      display: block; 
+      font-size: 14px;
+      border: 1px solid #333;
+      background: #2a2a3e;
+      border-radius: 4px;
+    }
+    .dropdown-content a.main-sign:hover { background-color: #f0ad4e; color: #1a1a2e; }
 
-    /* Segundo nivel: Combinaciones (Submenú lateral) */
-    .submenu-content { display: none; position: absolute; left: 100%; top: 0; background-color: #282828; min-width: 200px; box-shadow: 4px 8px 16px rgba(0,0,0,0.5); border-radius: 5px; }
+    /* Segundo nivel: Combinaciones (Se despliega hacia abajo) */
+    .submenu-content { 
+      display: none; 
+      position: absolute; 
+      left: 0; 
+      top: 100%; 
+      background-color: #282828; 
+      min-width: 180px; 
+      box-shadow: 4px 8px 16px rgba(0,0,0,0.5); 
+      border-radius: 5px; 
+      z-index: 20;
+    }
     .submenu-container:hover .submenu-content { display: block; }
+    .submenu-content a { color: #eee; padding: 10px; text-decoration: none; display: block; font-size: 13px; text-align: left; border-bottom: 1px solid #333; }
+    .submenu-content a:hover { background: #444; color: #f0ad4e; }
     /* ------------------------------ */
 
     .sign { margin-top: 20px; padding: 15px; border-bottom: 1px dashed #444; }
     .sign h2 { color: #f0ad4e; margin: 0; }
     .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
+
+    /* Ajuste para móviles */
+    @media (max-width: 650px) {
+      .dropdown-content { min-width: 90%; }
+      .menu-grid { grid-template-columns: repeat(3, 1fr); } /* 3 columnas en móvil */
+    }
   </style>
 </head>
 <body>

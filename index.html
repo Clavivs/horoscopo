@@ -6,31 +6,77 @@
   <title>Horóscopo Diario Gratis</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #0f0c29; color: #eee; }
-    .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
+    .container { max-width: 900px; margin: 30px auto; padding: 25px; background: #1a1a2e; border-radius: 15px; border: 1px solid #333; }
     h1 { color: #f0ad4e; text-align: center; margin-bottom: 10px; }
     .date { color: #5bc0de; text-align: center; font-weight: bold; margin-bottom: 20px; }
     
-    /* --- Estilos Menú Multinivel --- */
+    /* --- Estilos Menú Multinivel (Grilla 2x6) --- */
     .nav-menu { display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 1px solid #444; padding-bottom: 15px; }
-    .dropdown { position: relative; display: inline-block; }
+    .dropdown { position: relative; display: inline-block; width: 100%; text-align: center; }
     .dropbtn { background-color: #f0ad4e; color: #1a1a2e; padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
     
-    /* Primer nivel: Lista de signos */
-    .dropdown-content { display: none; position: absolute; background-color: #222; min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); z-index: 10; border-radius: 5px; }
+    /* Contenedor de los 12 signos */
+    .dropdown-content { 
+      display: none; 
+      position: absolute; 
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #222; 
+      min-width: 600px; /* Ancho suficiente para 6 columnas */
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5); 
+      z-index: 10; 
+      border-radius: 5px; 
+      padding: 10px;
+    }
+
+    /* AQUÍ SE DEFINE LA FILA DE 6 */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 6 columnas iguales */
+      gap: 5px;
+    }
+
     .dropdown:hover .dropdown-content { display: block; }
     
     .submenu-container { position: relative; }
-    .dropdown-content a { color: #eee; padding: 12px 16px; text-decoration: none; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
-    .dropdown-content a:hover { background-color: #333; color: #f0ad4e; }
+    .dropdown-content a.main-sign { 
+      color: #eee; 
+      padding: 10px; 
+      text-decoration: none; 
+      display: block; 
+      font-size: 14px;
+      border: 1px solid #333;
+      background: #2a2a3e;
+      border-radius: 4px;
+    }
+    .dropdown-content a.main-sign:hover { background-color: #f0ad4e; color: #1a1a2e; }
 
-    /* Segundo nivel: Combinaciones (Submenú lateral) */
-    .submenu-content { display: none; position: absolute; left: 100%; top: 0; background-color: #282828; min-width: 200px; box-shadow: 4px 8px 16px rgba(0,0,0,0.5); border-radius: 5px; }
+    /* Segundo nivel: Combinaciones (Se despliega hacia abajo) */
+    .submenu-content { 
+      display: none; 
+      position: absolute; 
+      left: 0; 
+      top: 100%; 
+      background-color: #282828; 
+      min-width: 180px; 
+      box-shadow: 4px 8px 16px rgba(0,0,0,0.5); 
+      border-radius: 5px; 
+      z-index: 20;
+    }
     .submenu-container:hover .submenu-content { display: block; }
+    .submenu-content a { color: #eee; padding: 10px; text-decoration: none; display: block; font-size: 13px; text-align: left; border-bottom: 1px solid #333; }
+    .submenu-content a:hover { background: #444; color: #f0ad4e; }
     /* ------------------------------ */
 
     .sign { margin-top: 20px; padding: 15px; border-bottom: 1px dashed #444; }
     .sign h2 { color: #f0ad4e; margin: 0; }
     .footer { margin-top: 30px; font-size: 0.8em; color: #777; text-align: center; }
+
+    /* Ajuste para móviles */
+    @media (max-width: 650px) {
+      .dropdown-content { min-width: 90%; }
+      .menu-grid { grid-template-columns: repeat(3, 1fr); } /* 3 columnas en móvil */
+    }
   </style>
 </head>
 <body>
@@ -85,53 +131,53 @@
     
       <div class="sign">
         <h2>Aries ♈</h2>
-        <p>Hoy te sentirás atraído por algo nuevo, una aventura o un desafío que te permita expresar tu energía y espíritu libre. La luna en cuadratura con Marte te pide que seas cauteloso en tus impulsos y acciones.</p>
+        <p>Hoy te espera un día de gran energía y creatividad, aprovecha para iniciar nuevos proyectos. La luna llena te traerá noticias inesperadas que podrían cambiar tus planes</p>
       </div>
       <div class="sign">
         <h2>Tauro ♉</h2>
-        <p>La estabilidad y la seguridad serán tus principales objetivos, así que asegúrate de gestionar tus finanzas y recursos de manera eficiente. Un encuentro con alguien del pasado puede llevarte a reflexionar sobre tus elecciones actuales.</p>
+        <p>La estabilidad y la seguridad serán clave en tus decisiones, no te dejes llevar por la impaciencia. Un encuentro casual puede convertirse en una oportunidad laboral o de inversión</p>
       </div>
       <div class="sign">
         <h2>Géminis ♊</h2>
-        <p>La comunicación y la creatividad serán tus aliadas, aprovecha para expresar tus ideas y conectar con personas que compartan tus intereses. La flexibilidad y la adaptabilidad te permitirán sortear cualquier obstáculo que se te presente.</p>
+        <p>Tu curiosidad y capacidad de aprendizaje te llevarán a descubrir nuevas habilidades y conocimientos. La comunicación con tus seres queridos será fundamental para evitar malentendidos</p>
       </div>
       <div class="sign">
         <h2>Cáncer ♋</h2>
-        <p>La emoción y la sensibilidad serán las guías de tu día, conecta con tus seres queridos y haz un espacio para la reflexión y el autocuidado. Un descubrimiento inesperado puede llevarte a replantear tus planes a largo plazo.</p>
+        <p>La intuición y la empatía serán tus aliadas en este día, confía en tus instintos y no te dejes influir por opiniones ajenas. Un familiar o amigo cercano necesitará tu apoyo y comprensión</p>
       </div>
       <div class="sign">
         <h2>Leo ♌</h2>
-        <p>La confianza y la pasión serán las claves de tu éxito, asegúrate de compartir tus logros con los demás y recibir el reconocimiento que mereces. Un desafío en el ámbito laboral puede llevarte a demostrar tus habilidades y talentos.</p>
+        <p>Tu confianza y carisma te permitirán destacarte en cualquier situación, no dudes en tomar el liderazgo. Un reconocimiento o premio puede ser el resultado de tu esfuerzo y dedicación</p>
       </div>
       <div class="sign">
         <h2>Virgo ♍</h2>
-        <p>La atención al detalle y la analítica serán tus herramientas más valiosas, asegúrate de evaluar cada situación con cuidado y precisión. Un ajuste en tu rutina diaria puede llevarte a mejorar tu salud y bienestar general.</p>
+        <p>La atención al detalle y la perseverancia te ayudarán a superar cualquier obstáculo, no te rindas. Un cambio en tu rutina diaria puede ser beneficioso para tu salud y bienestar</p>
       </div>
       <div class="sign">
         <h2>Libra ♎</h2>
-        <p>La armonía y el equilibrio serán tus prioridades, busca el consenso y la cooperación con los demás para lograr tus objetivos. Un gesto amable y generoso puede llevarte a recibir una recompensa inesperada.</p>
+        <p>La armonía y el equilibrio serán fundamentales en tus relaciones, busca el punto medio y evita los extremos. Un encuentro social puede ser la oportunidad perfecta para conocer a alguien especial</p>
       </div>
       <div class="sign">
         <h2>Escorpio ♏</h2>
-        <p>La intensidad y la penetración serán las características que definan tu día, asegúrate de explorar las profundidades de tus pensamientos y emociones. Un secreto o una verdad oculta puede ser revelado, ten cuidado con la información que compartes.</p>
+        <p>Tu pasión y determinación te impulsarán a alcanzar tus metas, no te dejes distraer por obstáculos menores. Un secreto o información confidencial puede ser revelado, sé cuidadoso</p>
       </div>
       <div class="sign">
         <h2>Sagitario ♐</h2>
-        <p>La expansión y la exploración serán las guías de tu jornada, busca nuevas experiencias y conocimientos que te permitan crecer y evolucionar. Un viaje o una aventura pueden estar en el horizonte, mantén tu espíritu abierto y receptivo.</p>
+        <p>La aventura y la exploración te llaman, no te quedes atrapado en la rutina. Un viaje o experiencia nueva puede ser el catalizador para un nuevo capítulo en tu vida</p>
       </div>
       <div class="sign">
         <h2>Capricornio ♑</h2>
-        <p>La ambición y la responsabilidad serán las claves de tu éxito, asegúrate de establecer metas claras y trabajar hacia su logro con disciplina y perseverancia. Un reconocimiento o un logro puede llevarte a sentirte orgulloso de tus esfuerzos.</p>
+        <p>La responsabilidad y la disciplina serán claves para avanzar en tus objetivos, no te dejes llevar por la pereza. Un logro o reconocimiento laboral puede ser el resultado de tu esfuerzo</p>
       </div>
       <div class="sign">
         <h2>Acuario ♒</h2>
-        <p>La innovación y la humanidad serán las características que definan tu día, busca nuevas formas de ayudar a los demás y hacer una diferencia positiva en tu comunidad. Un encuentro con alguien que comparta tus ideales puede llevarte a unirse a una causa común.</p>
+        <p>La innovación y la originalidad te permitirán destacarte en cualquier situación, no tengas miedo de ser diferente. Un proyecto o idea revolucionaria puede ser el inicio de algo grande</p>
       </div>
       <div class="sign">
         <h2>Piscis ♓</h2>
-        <p>La intuición y la sensibilidad serán tus guías, asegúrate de escuchar a tu interior y confiar en tus instintos. Un sueño o una visión puede llevarte a descubrir un aspecto oculto de ti mismo o de tu realidad.</p>
+        <p>La sensibilidad y la compasión te ayudarán a conectar con los demás, no te dejes llevar por la negatividad. Un sueño o premonición puede ser el indicador de un cambio próximo en tu vida</p>
       </div>
-    <p class="footer">IA en tiempo real • 16:08:33</p>
+    <p class="footer">IA en tiempo real • 16:20:06</p>
   </div>
 </body>
 </html>

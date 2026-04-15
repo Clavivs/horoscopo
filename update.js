@@ -115,10 +115,10 @@ const newContent = `<!DOCTYPE html>
       padding: 10px;
     }
 
-    /* AQUÍ SE DEFINE LA FILA DE 6 */
+    /* AQUÍ SE DEFINE LA FILA  */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr); /* 6 columnas iguales */
+      grid-template-columns: repeat(12, 1fr); 
       gap: 5px;
     }
 

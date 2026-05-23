@@ -21,8 +21,7 @@
 </head>
 <body>
   <div class="container">
-    <a href="compatibilidades.html" class="back-link">← Volver a Compatibilidades</a>
-    
+    <a href="index.html" class="back-link">← Volver a Compatibilidades</a>
     <h1>Compatibilidad Acuario + Acuario ♒♒</h1>
     
     <div class="score-container">
